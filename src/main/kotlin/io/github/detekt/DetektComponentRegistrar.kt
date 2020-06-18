@@ -3,7 +3,7 @@ package io.github.detekt
 import io.github.detekt.internal.DetektService
 import io.github.detekt.internal.info
 import io.github.detekt.internal.reportFindings
-import io.gitlab.arturbosch.detekt.api.internal.ABSOLUTE_PATH
+import io.github.detekt.psi.ABSOLUTE_PATH
 import io.gitlab.arturbosch.detekt.cli.loadDefaultConfig
 import io.gitlab.arturbosch.detekt.core.ProcessingSettings
 import org.jetbrains.kotlin.analyzer.AnalysisResult
@@ -54,6 +54,8 @@ class DetektExtension(private val log: MessageCollector) : AnalysisHandlerExtens
     private fun createDefaultSettings() = ProcessingSettings(
         emptyList(),
         config = loadDefaultConfig(),
-        parallelCompilation = false
+        parallelCompilation = false,
+        outPrinter = System.out,
+        errPrinter = System.err
     )
 }

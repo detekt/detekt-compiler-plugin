@@ -16,7 +16,6 @@ buildscript {
 
 plugins {
     kotlin("jvm")
-    id("io.gitlab.arturbosch.detekt")
     id("com.github.ben-manes.versions")
     `maven-publish`
     id("com.jfrog.artifactory")
