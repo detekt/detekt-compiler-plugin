@@ -2,10 +2,6 @@ package io.github.detekt
 
 import io.github.detekt.internal.DetektService
 import io.github.detekt.internal.info
-import io.github.detekt.internal.reportFindings
-import io.github.detekt.psi.ABSOLUTE_PATH
-import io.gitlab.arturbosch.detekt.cli.loadDefaultConfig
-import io.gitlab.arturbosch.detekt.core.ProcessingSettings
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -40,22 +36,7 @@ class DetektExtension(private val log: MessageCollector) : AnalysisHandlerExtens
         files: Collection<KtFile>
     ): AnalysisResult? {
         log.info("Starting detekt")
-        prepareFiles(files)
-        val service = DetektService(log, createDefaultSettings())
-        val result = service.analyze(files, bindingTrace.bindingContext)
-        log.reportFindings(result)
+        DetektService(log).analyze(files, bindingTrace.bindingContext)
         return null
     }
-
-    private fun prepareFiles(files: Collection<KtFile>) {
-        files.forEach { it.putUserData(ABSOLUTE_PATH, it.containingKtFile.virtualFilePath) }
-    }
-
-    private fun createDefaultSettings() = ProcessingSettings(
-        emptyList(),
-        config = loadDefaultConfig(),
-        parallelCompilation = false,
-        outPrinter = System.out,
-        errPrinter = System.err
-    )
 }

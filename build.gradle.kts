@@ -10,7 +10,9 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("io.github.detekt:detekt-compiler-plugin:0.1.2")
+        if (System.getProperty("skipAnalysis")?.toBoolean() != true) {
+            classpath("io.github.detekt:detekt-compiler-plugin:0.2.0")
+        }
     }
 }
 
@@ -22,7 +24,9 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-apply(plugin = "detekt-compiler-plugin")
+if (System.getProperty("skipAnalysis")?.toBoolean() != true) {
+    apply(plugin = "detekt-compiler-plugin")
+}
 
 val detektVersion: String by project
 val kotlinVersion: String by project
@@ -41,16 +45,18 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion")
     compileOnly(kotlin("stdlib", version = kotlinVersion))
     compileOnly(kotlin("compiler-embeddable", version = kotlinVersion))
-    implementation("io.gitlab.arturbosch.detekt:detekt-core:$detektVersion") {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
-    }
-    implementation("io.gitlab.arturbosch.detekt:detekt-cli:$detektVersion") {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
-    }
+    implementation("io.gitlab.arturbosch.detekt:detekt-api:$detektVersion")
+    implementation("io.gitlab.arturbosch.detekt:detekt-tooling:$detektVersion")
+    runtimeOnly("io.gitlab.arturbosch.detekt:detekt-core:$detektVersion")
+    runtimeOnly("io.gitlab.arturbosch.detekt:detekt-rules:$detektVersion")
+    runtimeOnly("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs = listOf(
+        "-Xopt-in=kotlin.RequiresOptIn"
+    )
 }
 
 val bintrayUser = findProperty("bintrayUser")?.toString() ?: System.getenv("BINTRAY_USER")
