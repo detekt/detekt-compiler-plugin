@@ -1,8 +1,8 @@
-# __detekt-compiler-plugin__
+# WIP: __detekt-compiler-plugin__
 
 [![Download](https://api.bintray.com/packages/arturbosch/code-analysis/detekt-compiler-plugin/images/download.svg) ](https://bintray.com/arturbosch/code-analysis/detekt-compiler-plugin/_latestVersion)
 
-WIP: Experimental support for integrating detekt as a Kotlin compiler plugin
+Experimental support for integrating detekt as a Kotlin compiler plugin
 
 ![image](docs/detekt-compiler-plugin.png "image")
 
@@ -16,7 +16,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("io.github.detekt:detekt-compiler-plugin:0.1.2")
+        classpath("io.github.detekt:detekt-compiler-plugin:<version>")
     }
 }
 
@@ -31,4 +31,3 @@ apply(plugin = "detekt-compiler-plugin")
 
 - no custom configs / just default config
 - no baseline or other detekt flags yet
-- no full path shown
