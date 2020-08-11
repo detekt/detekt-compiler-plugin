@@ -10,24 +10,22 @@ Experimental support for integrating detekt as a Kotlin compiler plugin
 ### Usage
 
 ```kotlin
-buildscript {
-    repositories {
-        maven { setUrl("https://dl.bintray.com/arturbosch/code-analysis") }
-        mavenLocal()
-    }
-    dependencies {
-        classpath("io.github.detekt:detekt-compiler-plugin:<version>")
-    }
-}
-
 plugins {
-    kotlin("jvm")
+    id("io.github.detekt.gradle.compiler-plugin") version "<latest>"
 }
 
-apply(plugin = "detekt-compiler-plugin")
+detekt {
+    isEnabled = true // or with a property: System.getProperty("runDetekt") != null
+    // everything from https://detekt.github.io/detekt/kotlindsl.html#options-for-detekt-configuration-closure
+    // is supported to declare, only some options are used. See limitations. 
+}
 ```
 
 ### Limitations
 
-- no custom configs / just default config
-- no baseline or other detekt flags yet
+Everything our Gradle plugin (`DetektExtension`) supports, is also supported on the declaration side with this plugin.  
+However only the following options are implemented/passed down to detekt:
+- config
+- baseline
+- debug
+- buildUponDefaultConfig

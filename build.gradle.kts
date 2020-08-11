@@ -1,33 +1,30 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    repositories {
-        maven { setUrl("https://dl.bintray.com/arturbosch/code-analysis") }
-        mavenLocal()
-    }
-    dependencies {
-        if (System.getProperty("selfAnalysis") != null) {
-            classpath("io.github.detekt:detekt-compiler-plugin:0.2.0")
-        }
-    }
-}
-
-plugins {
-    kotlin("jvm")
-    id("com.github.ben-manes.versions")
-    `maven-publish`
-}
-
-if (System.getProperty("selfAnalysis") != null) {
-    apply(plugin = "detekt-compiler-plugin")
-}
-
 val detektVersion: String by project
 val kotlinVersion: String by project
 val detektPluginVersion: String by project
 
 group = "io.github.detekt"
 version = detektPluginVersion + if (System.getProperty("snapshot")?.toBoolean() == true) "-SNAPSHOT" else ""
+
+val bintrayUser: String? = findProperty("bintrayUser")?.toString() ?: System.getenv("BINTRAY_USER")
+val bintrayKey: String? = findProperty("bintrayKey")?.toString() ?: System.getenv("BINTRAY_API_KEY")
+val detektPublication = "DetektPublication"
+
+plugins {
+    kotlin("jvm")
+    id("com.github.ben-manes.versions")
+    `maven-publish`
+    `java-gradle-plugin`
+    id("com.gradle.plugin-publish")
+    id("io.github.detekt.gradle.compiler-plugin")
+}
+
+detekt {
+    debug = true
+    isEnabled = System.getProperty("selfAnalysis") != null
+    buildUponDefaultConfig = true
+}
 
 repositories {
     jcenter()
@@ -37,8 +34,8 @@ repositories {
 dependencies {
     compileOnly(gradleApi())
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion")
-    compileOnly(kotlin("stdlib", version = kotlinVersion))
-    compileOnly(kotlin("compiler-embeddable", version = kotlinVersion))
+    compileOnly(kotlin("stdlib", kotlinVersion))
+    compileOnly(kotlin("compiler-embeddable", kotlinVersion))
     implementation("io.gitlab.arturbosch.detekt:detekt-api:$detektVersion")
     implementation("io.gitlab.arturbosch.detekt:detekt-tooling:$detektVersion")
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-core:$detektVersion")
@@ -52,10 +49,6 @@ tasks.withType<KotlinCompile> {
         "-Xopt-in=kotlin.RequiresOptIn"
     )
 }
-
-val bintrayUser: String = findProperty("bintrayUser")?.toString() ?: System.getenv("BINTRAY_USER")
-val bintrayKey: String = findProperty("bintrayKey")?.toString() ?: System.getenv("BINTRAY_API_KEY")
-val detektPublication = "DetektPublication"
 
 val sourcesJar by tasks.creating(Jar::class) {
     dependsOn(tasks.classes)
@@ -77,7 +70,10 @@ publishing {
     repositories {
         maven {
             name = "bintray"
-            url = uri("https://api.bintray.com/maven/arturbosch/code-analysis/detekt-compiler-plugin/;publish=1;override=1")
+            url = uri(
+                "https://api.bintray.com/maven/arturbosch/code-analysis/detekt-compiler-plugin/" +
+                    ";publish=1;override=1"
+            )
             credentials {
                 username = bintrayUser
                 password = bintrayKey
@@ -105,6 +101,29 @@ publishing {
             scm {
                 url.set("https://github.com/detekt/detekt")
             }
+        }
+    }
+}
+
+gradlePlugin {
+    plugins {
+        register("detektCompilerPlugin") {
+            id = "io.github.detekt.gradle.compiler-plugin"
+            implementationClass = "io.github.detekt.gradle.DetektGradlePlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://detekt.github.io/detekt"
+    vcsUrl = "https://github.com/detekt/detekt-compiler-plugin"
+    description = "Static code analysis for Kotlin as a compiler plugin."
+    tags = listOf("kotlin", "detekt", "code-analysis")
+
+    (plugins) {
+        "detektCompilerPlugin" {
+            id = "io.github.detekt.gradle.compiler-plugin"
+            displayName = "Static code analysis for Kotlin"
         }
     }
 }

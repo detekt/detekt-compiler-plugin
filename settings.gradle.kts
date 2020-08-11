@@ -1,17 +1,19 @@
 rootProject.name = "detekt-compiler-plugin"
 
 pluginManagement {
-    val artifactoryVersion: String by settings
-    val bintrayVersion: String by settings
     val gradleVersionsPluginVersion: String by settings
     val kotlinVersion: String by settings
-    val detektVersion: String by settings
+
+    repositories {
+        gradlePluginPortal()
+        mavenLocal()
+        maven { setUrl("https://dl.bintray.com/arturbosch/code-analysis") }
+    }
 
     plugins {
         kotlin("jvm") version kotlinVersion
-        id("io.gitlab.arturbosch.detekt") version detektVersion
-        id("com.jfrog.artifactory") version artifactoryVersion
-        id("com.jfrog.bintray") version bintrayVersion
+        id("io.github.detekt.gradle.compiler-plugin") version "0.3.0"
+        id("com.gradle.plugin-publish") version "0.11.0"
         id("com.github.ben-manes.versions") version gradleVersionsPluginVersion
     }
 }

@@ -1,4 +1,4 @@
-package io.github.detekt.internal
+package io.github.detekt.compiler.plugin.internal
 
 import io.github.detekt.tooling.api.DetektProvider
 import io.github.detekt.tooling.api.InvalidConfig
@@ -10,19 +10,22 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class DetektService(private val log: MessageCollector) {
+internal class DetektService(
+    private val log: MessageCollector,
+    private val spec: ProcessingSpec
+) {
 
     @OptIn(UnstableApi::class)
     fun analyze(files: Collection<KtFile>, context: BindingContext) {
-        val spec = ProcessingSpec { }
         val detekt = DetektProvider.load().get(spec)
         val result = detekt.run(files, context)
         log.info("${files.size} files analyzed")
         result.container?.let { log.reportFindings(it) }
+        log.info("Success?: ${result.error == null}")
         when (val error = result.error) {
             is UnexpectedError -> throw error
-            is MaxIssuesReached -> Unit // handle based on config
-            is InvalidConfig -> Unit // handle based on config
+            is MaxIssuesReached -> log.warn(error.localizedMessage) // TODO: handle MaxIssuePolicy
+            is InvalidConfig -> log.warn(error.localizedMessage)
         }
     }
 }
