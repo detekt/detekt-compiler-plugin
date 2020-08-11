@@ -29,6 +29,7 @@ detekt {
 repositories {
     jcenter()
     mavenLocal()
+    maven { setUrl("https://dl.bintray.com/arturbosch/code-analysis") }
 }
 
 dependencies {
