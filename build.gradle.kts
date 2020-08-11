@@ -10,7 +10,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        if (System.getProperty("skipAnalysis")?.toBoolean() != true) {
+        if (System.getProperty("selfAnalysis") != null) {
             classpath("io.github.detekt:detekt-compiler-plugin:0.2.0")
         }
     }
@@ -24,7 +24,7 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-if (System.getProperty("skipAnalysis")?.toBoolean() != true) {
+if (System.getProperty("selfAnalysis") != null) {
     apply(plugin = "detekt-compiler-plugin")
 }
 
