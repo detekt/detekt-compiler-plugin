@@ -1,8 +1,4 @@
-import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
-import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
-import java.util.Date
 
 buildscript {
     repositories {
@@ -20,8 +16,6 @@ plugins {
     kotlin("jvm")
     id("com.github.ben-manes.versions")
     `maven-publish`
-    id("com.jfrog.artifactory")
-    id("com.jfrog.bintray")
 }
 
 if (System.getProperty("selfAnalysis") != null) {
@@ -59,42 +53,9 @@ tasks.withType<KotlinCompile> {
     )
 }
 
-val bintrayUser = findProperty("bintrayUser")?.toString() ?: System.getenv("BINTRAY_USER")
-val bintrayKey = findProperty("bintrayKey")?.toString() ?: System.getenv("BINTRAY_API_KEY")
+val bintrayUser: String = findProperty("bintrayUser")?.toString() ?: System.getenv("BINTRAY_USER")
+val bintrayKey: String = findProperty("bintrayKey")?.toString() ?: System.getenv("BINTRAY_API_KEY")
 val detektPublication = "DetektPublication"
-
-bintray {
-    user = bintrayUser
-    key = bintrayKey
-    val mavenCentralUser = System.getenv("MAVEN_CENTRAL_USER") ?: ""
-    val mavenCentralPassword = System.getenv("MAVEN_CENTRAL_PW") ?: ""
-
-    setPublications(detektPublication)
-
-    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-        repo = "code-analysis"
-        name = "detekt-compiler-plugin"
-        userOrg = "arturbosch"
-        setLicenses("Apache-2.0")
-        vcsUrl = "https://github.com/detekt/detekt-compiler-plugin"
-
-        version(delegateClosureOf<BintrayExtension.VersionConfig> {
-            name = project.version as? String
-            released = Date().toString()
-
-            gpg(delegateClosureOf<BintrayExtension.GpgConfig> {
-                sign = true
-            })
-
-//            mavenCentralSync(delegateClosureOf<BintrayExtension.MavenCentralSyncConfig> {
-//                sync = true
-//                user = mavenCentralUser
-//                password = mavenCentralPassword
-//                close = "1"
-//            })
-        })
-    })
-}
 
 val sourcesJar by tasks.creating(Jar::class) {
     dependsOn(tasks.classes)
@@ -113,6 +74,16 @@ artifacts {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "bintray"
+            url = uri("https://api.bintray.com/maven/arturbosch/code-analysis/detekt-compiler-plugin/;publish=1;override=1")
+            credentials {
+                username = bintrayUser
+                password = bintrayKey
+            }
+        }
+    }
     publications.create<MavenPublication>(detektPublication) {
         from(components["java"])
         artifact(sourcesJar)
@@ -121,9 +92,9 @@ publishing {
         artifactId = rootProject.name
         version = rootProject.version as? String
         pom {
-            description.set("Static code analysis for Kotlin")
-            name.set("detekt")
-            url.set("https://arturbosch.github.io/detekt")
+            description.set("Static code analysis for Kotlin as a compiler plugin.")
+            name.set("detekt-compiler-plugin")
+            url.set("https://detekt.github.io/detekt")
             licenses {
                 license {
                     name.set("The Apache Software License, Version 2.0")
@@ -131,33 +102,9 @@ publishing {
                     distribution.set("repo")
                 }
             }
-            developers {
-                developer {
-                    id.set("Artur Bosch")
-                    name.set("Artur Bosch")
-                    email.set("arturbosch@gmx.de")
-                }
-            }
             scm {
-                url.set("https://github.com/arturbosch/detekt")
+                url.set("https://github.com/detekt/detekt")
             }
         }
     }
-}
-
-configure<ArtifactoryPluginConvention> {
-    setContextUrl("https://oss.jfrog.org/artifactory")
-    publish(delegateClosureOf<PublisherConfig> {
-        repository(delegateClosureOf<groovy.lang.GroovyObject> {
-            setProperty("repoKey", "oss-snapshot-local")
-            setProperty("username", bintrayUser)
-            setProperty("password", bintrayKey)
-            setProperty("maven", true)
-        })
-        defaults(delegateClosureOf<groovy.lang.GroovyObject> {
-            invokeMethod("publications", detektPublication)
-            setProperty("publishArtifacts", true)
-            setProperty("publishPom", true)
-        })
-    })
 }
