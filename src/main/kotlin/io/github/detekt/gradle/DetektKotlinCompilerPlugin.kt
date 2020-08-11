@@ -22,7 +22,7 @@ class DetektKotlinCompilerPlugin : KotlinGradleSubplugin<AbstractCompile> {
     override fun getCompilerPluginId(): String = "detekt-compiler-plugin"
 
     override fun getPluginArtifact(): SubpluginArtifact =
-        SubpluginArtifact("io.github.detekt", "detekt-compiler-plugin", "0.1.2") // TODO: generate version
+        SubpluginArtifact("io.github.detekt", "detekt-compiler-plugin", "0.2.0") // TODO: generate version
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean = true
 }
