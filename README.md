@@ -1,5 +1,6 @@
 # WIP: __detekt-compiler-plugin__
 
+![Pre Merge Checks](https://github.com/detekt/detekt-compiler-plugin/workflows/Pre%20Merge%20Checks/badge.svg)
 [![Download](https://api.bintray.com/packages/arturbosch/code-analysis/detekt-compiler-plugin/images/download.svg) ](https://bintray.com/arturbosch/code-analysis/detekt-compiler-plugin/_latestVersion)
 
 Experimental support for integrating detekt as a Kotlin compiler plugin
