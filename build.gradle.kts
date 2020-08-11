@@ -5,7 +5,7 @@ val kotlinVersion: String by project
 val detektPluginVersion: String by project
 
 group = "io.github.detekt"
-version = detektPluginVersion + if (System.getProperty("snapshot")?.toBoolean() == true) "-SNAPSHOT" else ""
+version = detektPluginVersion
 
 val bintrayUser: String? = findProperty("bintrayUser")?.toString() ?: System.getenv("BINTRAY_USER")
 val bintrayKey: String? = findProperty("bintrayKey")?.toString() ?: System.getenv("BINTRAY_API_KEY")
