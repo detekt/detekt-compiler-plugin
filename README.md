@@ -1,7 +1,7 @@
 # WIP: __detekt-compiler-plugin__
 
 ![Pre Merge Checks](https://github.com/detekt/detekt-compiler-plugin/workflows/Pre%20Merge%20Checks/badge.svg)
-[![Download](https://api.bintray.com/packages/arturbosch/code-analysis/detekt-compiler-plugin/images/download.svg) ](https://bintray.com/arturbosch/code-analysis/detekt-compiler-plugin/_latestVersion)
+[![gradle plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/io/github/detekt/gradle/compiler-plugin/io.github.detekt.gradle.compiler-plugin.gradle.plugin/maven-metadata.xml.svg?label=Gradle&style=flat-square)](https://plugins.gradle.org/plugin/io.github.detekt.gradle.compiler-plugin)
 
 Experimental support for integrating detekt as a Kotlin compiler plugin
 
