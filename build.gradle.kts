@@ -18,6 +18,7 @@ plugins {
     `java-gradle-plugin`
     id("com.gradle.plugin-publish")
     id("io.github.detekt.gradle.compiler-plugin")
+    id("com.github.johnrengelman.shadow")
 }
 
 detekt {
@@ -42,6 +43,21 @@ dependencies {
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-core:$detektVersion")
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-rules:$detektVersion")
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
+}
+
+tasks.shadowJar {
+    relocate("org.jetbrains.kotlin.com.intellij", "com.intellij")
+    mergeServiceFiles()
+    dependencies {
+        exclude(dependency("org.jetbrains.intellij.deps:trove4j"))
+        exclude(dependency("org.jetbrains:annotations"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-compiler-embeddable"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-daemon-embeddable"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-script-runtime"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-common"))
+    }
 }
 
 tasks.withType<KotlinCompile> {

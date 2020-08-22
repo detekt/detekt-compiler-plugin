@@ -3,6 +3,7 @@ rootProject.name = "detekt-compiler-plugin"
 pluginManagement {
     val gradleVersionsPluginVersion: String by settings
     val kotlinVersion: String by settings
+    val shadowVersion: String by settings
 
     repositories {
         gradlePluginPortal()
@@ -15,5 +16,6 @@ pluginManagement {
         id("io.github.detekt.gradle.compiler-plugin") version "0.3.0"
         id("com.gradle.plugin-publish") version "0.11.0"
         id("com.github.ben-manes.versions") version gradleVersionsPluginVersion
+        id("com.github.johnrengelman.shadow") version shadowVersion
     }
 }
