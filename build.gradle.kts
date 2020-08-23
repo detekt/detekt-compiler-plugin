@@ -21,6 +21,7 @@ plugins {
     `java-gradle-plugin`
     id("com.gradle.plugin-publish")
     id("io.github.detekt.gradle.compiler-plugin")
+    id("com.github.johnrengelman.shadow")
 }
 
 detekt {
@@ -53,6 +54,21 @@ dependencies {
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestVersion")
     testImplementation( "org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
+}
+
+tasks.shadowJar {
+    relocate("org.jetbrains.kotlin.com.intellij", "com.intellij")
+    mergeServiceFiles()
+    dependencies {
+        exclude(dependency("org.jetbrains.intellij.deps:trove4j"))
+        exclude(dependency("org.jetbrains:annotations"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-compiler-embeddable"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-daemon-embeddable"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-script-runtime"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-common"))
+    }
 }
 
 tasks.withType<KotlinCompile> {
