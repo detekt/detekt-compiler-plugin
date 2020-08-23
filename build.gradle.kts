@@ -1,8 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val assertJVersion: String by project
 val detektVersion: String by project
 val kotlinVersion: String by project
+val kotlinCompileTestVersion: String by project
 val detektPluginVersion: String by project
+val spekVersion: String by project
 
 group = "io.github.detekt"
 version = detektPluginVersion
@@ -30,6 +33,9 @@ repositories {
     jcenter()
     mavenLocal()
     maven { setUrl("https://dl.bintray.com/arturbosch/code-analysis") }
+    maven {
+        setUrl("https://dl.bintray.com/spekframework/spek-dev")
+    }
 }
 
 dependencies {
@@ -42,6 +48,11 @@ dependencies {
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-core:$detektVersion")
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-rules:$detektVersion")
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
+
+    testImplementation("org.assertj:assertj-core:$assertJVersion")
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestVersion")
+    testImplementation( "org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
 }
 
 tasks.withType<KotlinCompile> {
