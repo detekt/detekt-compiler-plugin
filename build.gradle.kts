@@ -45,7 +45,7 @@ repositories {
 
 dependencies {
     compileOnly(gradleApi())
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion")
+    compileOnly(kotlin("gradle-plugin-api", kotlinVersion))
     compileOnly(kotlin("stdlib", kotlinVersion))
     compileOnly(kotlin("compiler-embeddable", kotlinVersion))
     implementation("io.gitlab.arturbosch.detekt:detekt-api:$detektVersion")
