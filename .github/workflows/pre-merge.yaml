@@ -53,3 +53,8 @@ jobs:
 
       - name: Build detekt
         run: ./gradlew build
+
+
+      - name: Run smoke test
+        run: ./gradlew testPluginKotlinc
+        if: ${{ runner.os != 'Windows' }}
