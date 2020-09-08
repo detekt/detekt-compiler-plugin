@@ -52,7 +52,7 @@ jobs:
 
 
       - name: Build detekt
-        run: ./gradlew build
+        run: ./gradlew build --stacktrace
 
 
       - name: Run smoke test
