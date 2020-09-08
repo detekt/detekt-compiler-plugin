@@ -45,7 +45,7 @@ repositories {
 
 dependencies {
     compileOnly(gradleApi())
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion")
+    compileOnly(kotlin("gradle-plugin-api", kotlinVersion))
     compileOnly(kotlin("stdlib", kotlinVersion))
     compileOnly(kotlin("compiler-embeddable", kotlinVersion))
     implementation("io.gitlab.arturbosch.detekt:detekt-api:$detektVersion")
@@ -60,7 +60,7 @@ dependencies {
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
 }
 
-tasks.shadowJar {
+tasks.shadowJar.configure {
     relocate("org.jetbrains.kotlin.com.intellij", "com.intellij")
     mergeServiceFiles()
     dependencies {
@@ -75,29 +75,29 @@ tasks.shadowJar {
     }
 }
 
-val verifyKotlinCompilerDownload by tasks.creating(Verify::class) {
+val verifyKotlinCompilerDownload by tasks.registering(Verify::class) {
     src(file("$rootDir/.kotlinc/kotlin-compiler-$kotlinVersion.zip"))
     algorithm("SHA-256")
     checksum(kotlinCompilerChecksum)
     outputs.upToDateWhen { true }
 }
 
-val downloadKotlinCompiler by tasks.creating(Download::class) {
+val downloadKotlinCompiler by tasks.registering(Download::class) {
     src("https://github.com/JetBrains/kotlin/releases/download/v$kotlinVersion/kotlin-compiler-$kotlinVersion.zip")
     dest(file("$rootDir/.kotlinc/kotlin-compiler-$kotlinVersion.zip"))
     overwrite(false)
     finalizedBy(verifyKotlinCompilerDownload)
 }
 
-val unzipKotlinCompiler by tasks.creating(Copy::class) {
+val unzipKotlinCompiler by tasks.registering(Copy::class) {
     dependsOn(downloadKotlinCompiler)
-    from(zipTree(downloadKotlinCompiler.dest))
+    from(zipTree(downloadKotlinCompiler.get().dest))
     into(file("$rootDir/.kotlinc/$kotlinVersion"))
 }
 
-val testPluginKotlinc by tasks.creating(RunTestExecutable::class) {
+val testPluginKotlinc by tasks.registering(RunTestExecutable::class) {
     dependsOn(unzipKotlinCompiler, tasks.shadowJar)
-    executable(file("${unzipKotlinCompiler.destinationDir}/kotlinc/bin/kotlinc"))
+    executable(file("${unzipKotlinCompiler.get().destinationDir}/kotlinc/bin/kotlinc"))
     args(
         listOf(
             "$rootDir/src/test/resources/hello.kt",
@@ -120,20 +120,20 @@ val testPluginKotlinc by tasks.creating(RunTestExecutable::class) {
     }
 }
 
-tasks.withType<KotlinCompile> {
+tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs = listOf(
         "-Xopt-in=kotlin.RequiresOptIn"
     )
 }
 
-val sourcesJar by tasks.creating(Jar::class) {
+val sourcesJar by tasks.registering(Jar::class) {
     dependsOn(tasks.classes)
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
 }
 
-val javadocJar by tasks.creating(Jar::class) {
+val javadocJar by tasks.registering(Jar::class) {
     from(tasks.javadoc)
     archiveClassifier.set("javadoc")
 }
