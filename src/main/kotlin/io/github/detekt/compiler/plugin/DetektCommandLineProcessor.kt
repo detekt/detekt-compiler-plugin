@@ -33,7 +33,7 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             Options.isEnabled,
             "<true|false>",
             "Should detekt run?",
-            true
+            false
         ),
         CliOption(
             Options.useDefaultConfig,
