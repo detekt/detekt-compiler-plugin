@@ -24,12 +24,14 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
             add(SubpluginOption(Options.debug, extension.debug.toString()))
-            add(SubpluginOption(Options.config, extension.config.joinToString(",")))
             add(SubpluginOption(Options.isEnabled, extension.isEnabled.toString()))
             add(SubpluginOption(Options.useDefaultConfig, extension.buildUponDefaultConfig.toString()))
         }
 
         extension.baseline?.let { options.add(SubpluginOption(Options.baseline, it.toString())) }
+        if (extension.config.any()) {
+            options.add(SubpluginOption(Options.config, extension.config.joinToString(",")))
+        }
 
         return options
     }
