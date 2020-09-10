@@ -35,5 +35,5 @@ fun Finding.renderAsCompilerWarningMessage(): Pair<String, CompilerMessageLocati
         CompilerMessageLocation.create(location.path, line, column, location.lineContent)
     }
 
-    return messageOrDescription() to sourceLocation
+    return "$id: ${messageOrDescription()}" to sourceLocation
 }
