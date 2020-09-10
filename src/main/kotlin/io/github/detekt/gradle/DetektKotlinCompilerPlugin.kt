@@ -3,11 +3,15 @@ package io.github.detekt.gradle
 import io.github.detekt.compiler.plugin.Options
 import io.github.detekt.gradle.extensions.DetektExtension
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import java.io.File
+import java.security.MessageDigest
+import java.util.Base64
 
 class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
@@ -24,6 +28,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
             add(SubpluginOption(Options.debug, extension.debug.toString()))
+            add(SubpluginOption(Options.configDigest, extension.config.toDigest()))
             add(SubpluginOption(Options.isEnabled, extension.isEnabled.toString()))
             add(SubpluginOption(Options.useDefaultConfig, extension.buildUponDefaultConfig.toString()))
         }
@@ -34,6 +39,17 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         }
 
         return options
+    }
+
+    private fun ConfigurableFileCollection.toDigest(): String {
+        val concatenatedConfig = this
+            .filter { it.isFile }
+            .map(File::readBytes)
+            .fold(byteArrayOf()) { acc, file -> acc + file }
+
+        return Base64.getEncoder().encodeToString(
+            MessageDigest.getInstance("SHA-256").digest(concatenatedConfig)
+        )
     }
 
     override fun getCompilerPluginId(): String = DETEKT_COMPILER_PLUGIN
