@@ -31,7 +31,6 @@ plugins {
 detekt {
     debug = true
     isEnabled = System.getProperty("selfAnalysis") != null
-    buildUponDefaultConfig = true
 }
 
 repositories {
