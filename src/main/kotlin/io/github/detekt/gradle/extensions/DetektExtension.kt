@@ -27,15 +27,7 @@ open class DetektExtension(project: Project) : CodeQualityExtension() {
             isIgnoreFailures = value
         }
 
-    var input: ConfigurableFileCollection =
-        project.objects.fileCollection().from(DEFAULT_SRC_DIR_JAVA, DEFAULT_SRC_DIR_KOTLIN)
-
     val reports = DetektReports()
 
     fun reports(configure: Action<DetektReports>) = configure.execute(reports)
-
-    companion object {
-        const val DEFAULT_SRC_DIR_JAVA = "src/main/java"
-        const val DEFAULT_SRC_DIR_KOTLIN = "src/main/kotlin"
-    }
 }
