@@ -39,7 +39,7 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             Options.useDefaultConfig,
             "<true|false>",
             "Use the default detekt config as baseline.",
-            true
+            false
         )
     )
 
