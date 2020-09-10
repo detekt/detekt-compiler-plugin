@@ -33,13 +33,13 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             Options.isEnabled,
             "<true|false>",
             "Should detekt run?",
-            true
+            false
         ),
         CliOption(
             Options.useDefaultConfig,
             "<true|false>",
             "Use the default detekt config as baseline.",
-            true
+            false
         )
     )
 
