@@ -1,5 +1,6 @@
 import de.undercouch.gradle.tasks.download.Download
 import de.undercouch.gradle.tasks.download.Verify
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
@@ -53,10 +54,28 @@ dependencies {
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-rules:$detektVersion")
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
 
+    testImplementation(kotlin("reflect", kotlinVersion))
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestVersion")
-    testImplementation( "org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+    systemProperty("SPEK_TIMEOUT", 0)
+    testLogging {
+        events = setOf(
+            TestLogEvent.FAILED,
+            TestLogEvent.STANDARD_ERROR,
+            TestLogEvent.STANDARD_OUT,
+            TestLogEvent.SKIPPED
+        )
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
 }
 
 tasks.shadowJar.configure {
