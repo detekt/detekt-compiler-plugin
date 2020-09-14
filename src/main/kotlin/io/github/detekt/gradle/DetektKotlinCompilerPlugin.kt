@@ -41,21 +41,21 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         return options
     }
 
-    private fun ConfigurableFileCollection.toDigest(): String {
-        val concatenatedConfig = this
-            .filter { it.isFile }
-            .map(File::readBytes)
-            .fold(byteArrayOf()) { acc, file -> acc + file }
-
-        return Base64.getEncoder().encodeToString(
-            MessageDigest.getInstance("SHA-256").digest(concatenatedConfig)
-        )
-    }
-
     override fun getCompilerPluginId(): String = DETEKT_COMPILER_PLUGIN
 
     override fun getPluginArtifact(): SubpluginArtifact =
         SubpluginArtifact("io.github.detekt", "detekt-compiler-plugin", "0.2.0") // TODO: generate version
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
+}
+
+internal fun ConfigurableFileCollection.toDigest(): String {
+    val concatenatedConfig = this
+        .filter { it.isFile }
+        .map(File::readBytes)
+        .fold(byteArrayOf()) { acc, file -> acc + file }
+
+    return Base64.getEncoder().encodeToString(
+        MessageDigest.getInstance("SHA-256").digest(concatenatedConfig)
+    )
 }
