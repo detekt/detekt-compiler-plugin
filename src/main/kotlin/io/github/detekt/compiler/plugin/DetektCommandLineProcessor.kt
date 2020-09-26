@@ -18,6 +18,12 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             false
         ),
         CliOption(
+            Options.configDigest,
+            "<digest>",
+            "A digest calculated from the content of the config files. Used for Gradle incremental task invalidation.",
+            false
+        ),
+        CliOption(
             Options.baseline,
             "<path>",
             "Path to a detekt baseline file.",

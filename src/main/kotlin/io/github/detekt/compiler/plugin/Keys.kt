@@ -7,6 +7,7 @@ object Options {
     const val isEnabled: String = "isEnabled"
     const val debug: String = "debug"
     const val config = "config"
+    const val configDigest: String = "configDigest"
     const val baseline: String = "baseline"
     const val useDefaultConfig: String = "useDefaultConfig"
 }
