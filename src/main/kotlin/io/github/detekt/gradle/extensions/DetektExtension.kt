@@ -1,12 +1,13 @@
 package io.github.detekt.gradle.extensions
 
 import org.gradle.api.Action
-import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.quality.CodeQualityExtension
 import java.io.File
+import javax.inject.Inject
 
-open class DetektExtension(project: Project) : CodeQualityExtension() {
+open class DetektExtension constructor(@Inject val objects: ObjectFactory) : CodeQualityExtension() {
 
     var isEnabled: Boolean = true
     var baseline: File? = null
@@ -17,7 +18,7 @@ open class DetektExtension(project: Project) : CodeQualityExtension() {
     var disableDefaultRuleSets: Boolean = false
     var autoCorrect: Boolean = false
 
-    var config: ConfigurableFileCollection = project.objects.fileCollection()
+    var config: ConfigurableFileCollection = objects.fileCollection()
 
     var ignoreFailures: Boolean
         @JvmName("ignoreFailures_")
