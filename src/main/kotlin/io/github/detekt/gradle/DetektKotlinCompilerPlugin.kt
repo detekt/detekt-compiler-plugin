@@ -20,7 +20,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.pluginManager.apply(ReportingBasePlugin::class.java)
-        val extension = target.extensions.create(DETEKT_NAME, DetektExtension::class.java, target)
+        val extension = target.extensions.create(DETEKT_NAME, DetektExtension::class.java)
         extension.reportsDir = target.extensions.getByType(ReportingExtension::class.java).file(DETEKT_NAME)
 
         val defaultConfigFile = getDefaultConfigFile(target)
