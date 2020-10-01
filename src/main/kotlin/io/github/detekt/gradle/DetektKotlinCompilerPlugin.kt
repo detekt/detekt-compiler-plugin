@@ -18,11 +18,7 @@ import java.util.Base64
 
 class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
-    private lateinit var project: Project
-
     override fun apply(target: Project) {
-        project = target
-
         target.pluginManager.apply(ReportingBasePlugin::class.java)
         val extension = target.extensions.create(DETEKT_NAME, DetektExtension::class.java, target)
         extension.reportsDir = target.extensions.getByType(ReportingExtension::class.java).file(DETEKT_NAME)
@@ -35,6 +31,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
     }
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
+        val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(DetektExtension::class.java)
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
