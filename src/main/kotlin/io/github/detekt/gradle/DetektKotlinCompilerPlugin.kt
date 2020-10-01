@@ -35,9 +35,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
     }
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
-        val extension = project.extensions
-            .findByType(DetektExtension::class.java)
-            ?: DetektExtension(project)
+        val extension = project.extensions.getByType(DetektExtension::class.java)
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
             add(SubpluginOption(Options.debug, extension.debug.toString()))
