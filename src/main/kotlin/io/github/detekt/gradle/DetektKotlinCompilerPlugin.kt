@@ -32,6 +32,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
+
         val extension = project.extensions.getByType(DetektExtension::class.java)
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
@@ -52,7 +53,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
     override fun getCompilerPluginId(): String = DETEKT_COMPILER_PLUGIN
 
     override fun getPluginArtifact(): SubpluginArtifact =
-        SubpluginArtifact("io.github.detekt", "detekt-compiler-plugin", "0.4.0") // TODO: generate version
+        SubpluginArtifact("io.github.detekt", "detekt-compiler-plugin")
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =
         kotlinCompilation.platformType in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
