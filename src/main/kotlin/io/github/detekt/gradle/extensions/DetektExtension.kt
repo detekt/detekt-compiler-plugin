@@ -4,6 +4,7 @@ import org.gradle.api.Action
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.quality.CodeQualityExtension
+import org.gradle.api.provider.SetProperty
 import java.io.File
 import javax.inject.Inject
 
@@ -19,6 +20,7 @@ open class DetektExtension constructor(@Inject val objects: ObjectFactory) : Cod
     var autoCorrect: Boolean = false
 
     var config: ConfigurableFileCollection = objects.fileCollection()
+    val excludes: SetProperty<String> = objects.setProperty(String::class.java)
 
     var ignoreFailures: Boolean
         @JvmName("ignoreFailures_")

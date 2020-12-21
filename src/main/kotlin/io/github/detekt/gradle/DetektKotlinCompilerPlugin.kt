@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.ObjectOutputStream
 import java.security.MessageDigest
 import java.util.Base64
 
@@ -22,6 +24,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         target.pluginManager.apply(ReportingBasePlugin::class.java)
         val extension = target.extensions.create(DETEKT_NAME, DetektExtension::class.java)
         extension.reportsDir = target.extensions.getByType(ReportingExtension::class.java).file(DETEKT_NAME)
+        extension.excludes.add("**/${target.relativePath(target.buildDir)}/**")
 
         val defaultConfigFile = getDefaultConfigFile(target)
 
@@ -40,6 +43,8 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
             add(SubpluginOption(Options.configDigest, extension.config.toDigest()))
             add(SubpluginOption(Options.isEnabled, extension.isEnabled.toString()))
             add(SubpluginOption(Options.useDefaultConfig, extension.buildUponDefaultConfig.toString()))
+            add(SubpluginOption(Options.rootPath, project.rootDir.toString()))
+            add(SubpluginOption(Options.excludes, extension.excludes.get().encodeToBase64()))
         }
 
         extension.baseline?.let { options.add(SubpluginOption(Options.baseline, it.toString())) }
@@ -71,4 +76,16 @@ internal fun ConfigurableFileCollection.toDigest(): String {
     return Base64.getEncoder().encodeToString(
         MessageDigest.getInstance("SHA-256").digest(concatenatedConfig)
     )
+}
+
+private fun Set<String>.encodeToBase64(): String {
+    val os = ByteArrayOutputStream()
+
+    ObjectOutputStream(os).use { oos ->
+        oos.writeInt(size)
+        forEach(oos::writeUTF)
+        oos.flush()
+    }
+
+    return Base64.getEncoder().encodeToString(os.toByteArray())
 }

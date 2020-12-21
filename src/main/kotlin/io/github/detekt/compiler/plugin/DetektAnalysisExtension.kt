@@ -10,10 +10,15 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import java.nio.file.FileSystems
+import java.nio.file.Path
+import java.nio.file.Paths
 
 class DetektAnalysisExtension(
     private val log: MessageCollector,
-    private val spec: ProcessingSpec
+    private val spec: ProcessingSpec,
+    private val rootPath: Path,
+    private val excludes: Set<String>
 ) : AnalysisHandlerExtension {
 
     override fun analysisCompleted(
@@ -25,8 +30,13 @@ class DetektAnalysisExtension(
         if (spec.loggingSpec.debug) {
             log.info("$spec")
         }
+        val matchers = excludes.map { FileSystems.getDefault().getPathMatcher("glob:${it}") }
+        val (includedFiles, excludedFiles) = files.partition { file ->
+            matchers.none { it.matches(rootPath.relativize(Paths.get(file.virtualFilePath))) }
+        }
         log.info("Running detekt on module '${module.name.asString()}'")
-        DetektService(log, spec).analyze(files, bindingTrace.bindingContext)
+        excludedFiles.forEach { log.info("File excluded by filter: ${it.virtualFilePath}") }
+        DetektService(log, spec).analyze(includedFiles, bindingTrace.bindingContext)
         return null
     }
 }
