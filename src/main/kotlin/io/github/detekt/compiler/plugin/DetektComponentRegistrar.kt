@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import java.nio.file.Paths
 
 class DetektComponentRegistrar : ComponentRegistrar {
 
@@ -18,13 +19,16 @@ class DetektComponentRegistrar : ComponentRegistrar {
             return
         }
 
-        val messageCollector =
-            configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                ?: MessageCollector.NONE
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
         AnalysisHandlerExtension.registerExtension(
             project,
-            DetektAnalysisExtension(messageCollector, configuration.toSpec(messageCollector))
+            DetektAnalysisExtension(
+                messageCollector,
+                configuration.toSpec(messageCollector),
+                configuration.get(Keys.ROOT_PATH, Paths.get(System.getProperty("user.dir"))),
+                configuration.get(Keys.EXCLUDES, emptySet())
+            )
         )
     }
 }

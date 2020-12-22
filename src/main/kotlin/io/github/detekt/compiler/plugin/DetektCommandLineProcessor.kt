@@ -5,6 +5,10 @@ import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import java.io.ByteArrayInputStream
+import java.io.ObjectInputStream
+import java.nio.file.Paths
+import java.util.Base64
 
 class DetektCommandLineProcessor : CommandLineProcessor {
 
@@ -46,6 +50,18 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             "<true|false>",
             "Use the default detekt config as baseline.",
             false
+        ),
+        CliOption(
+            Options.rootPath,
+            "<path>",
+            "Root path used to relativize paths when using exclude patterns.",
+            false
+        ),
+        CliOption(
+            Options.excludes,
+            "<base64-encoded globs>",
+            "A base64-encoded list of the globs used to exclude paths from scanning.",
+            false
         )
     )
 
@@ -56,6 +72,23 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             Options.debug -> configuration.put(Keys.DEBUG, value.toBoolean())
             Options.isEnabled -> configuration.put(Keys.IS_ENABLED, value.toBoolean())
             Options.useDefaultConfig -> configuration.put(Keys.USE_DEFAULT_CONFIG, value)
+            Options.rootPath -> configuration.put(Keys.ROOT_PATH, Paths.get(value))
+            Options.excludes -> configuration.put(Keys.EXCLUDES, value.decodeToGlobSet())
         }
+    }
+}
+
+private fun String.decodeToGlobSet(): Set<String> {
+    val b = Base64.getDecoder().decode(this)
+    val bi = ByteArrayInputStream(b)
+
+    return ObjectInputStream(bi).use { inputStream ->
+        val globs = mutableSetOf<String>()
+
+        repeat(inputStream.readInt()) {
+            globs.add(inputStream.readUTF())
+        }
+
+        globs
     }
 }
