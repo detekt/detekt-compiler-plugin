@@ -31,12 +31,22 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         if (defaultConfigFile.exists()) {
             extension.config = target.files(defaultConfigFile)
         }
+
+        target.configurations.create(CONFIGURATION_DETEKT_PLUGINS) { configuration ->
+            configuration.isVisible = false
+            configuration.isTransitive = true
+            configuration.description = "The $CONFIGURATION_DETEKT_PLUGINS libraries to be used for this project."
+        }
     }
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
         val extension = project.extensions.getByType(DetektExtension::class.java)
+
+        project.configurations.getByName("kotlinCompilerPluginClasspath").apply {
+            extendsFrom(project.configurations.getAt(CONFIGURATION_DETEKT_PLUGINS))
+        }
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
             add(SubpluginOption(Options.debug, extension.debug.toString()))
