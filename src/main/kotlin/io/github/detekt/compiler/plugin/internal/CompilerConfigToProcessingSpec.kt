@@ -19,4 +19,9 @@ internal fun CompilerConfiguration.toSpec(log: MessageCollector) = ProcessingSpe
         outputChannel = AppendableAdapter { log.info(it) }
         errorChannel = AppendableAdapter { log.error(it) }
     }
+    reports {
+        get(Keys.REPORTS)?.forEach {
+            report { Pair(it.key, it.value) }
+        }
+    }
 }

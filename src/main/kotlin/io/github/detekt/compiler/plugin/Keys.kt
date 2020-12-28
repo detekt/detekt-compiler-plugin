@@ -13,6 +13,7 @@ object Options {
     const val useDefaultConfig: String = "useDefaultConfig"
     const val rootPath = "rootDir"
     const val excludes = "excludes"
+    const val report = "report"
 }
 
 object Keys {
@@ -24,4 +25,5 @@ object Keys {
     val USE_DEFAULT_CONFIG = CompilerConfigurationKey.create<String>(Options.useDefaultConfig)
     val ROOT_PATH = CompilerConfigurationKey.create<Path>(Options.rootPath)
     val EXCLUDES = CompilerConfigurationKey.create<Set<String>>(Options.excludes)
+    val REPORTS = CompilerConfigurationKey.create<Map<String, Path>>(Options.report)
 }

@@ -30,6 +30,22 @@ dependencies {
 }
 ```
 
+Reports can be customized using the `detekt` extension which is added to `KotlinCompile` tasks. Using Groovy this might
+look like:
+```groovy
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    detekt {
+        reports {
+            xml.enabled.set(true)
+            txt.enabled.set(false)
+            create("custom") {
+                enabled.set(false)
+            }
+        }
+    }
+}
+```
+
 ### Limitations
 
 Everything our Gradle plugin (`DetektExtension`) supports, is also supported on the declaration side with this plugin.  

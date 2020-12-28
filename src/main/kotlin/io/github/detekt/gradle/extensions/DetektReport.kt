@@ -1,14 +1,11 @@
 package io.github.detekt.gradle.extensions
 
-import java.io.File
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import javax.inject.Inject
 
-class DetektReport(val type: DetektReportType) {
-
-    var enabled: Boolean? = null
-
-    var destination: File? = null
-
-    override fun toString(): String {
-        return "DetektReport(type='$type', enabled=$enabled, destination=$destination)"
-    }
+open class DetektReport @Inject constructor(val name: String, objects: ObjectFactory) {
+    val enabled: Property<Boolean> = objects.property(Boolean::class.java)
+    val destination: RegularFileProperty = objects.fileProperty()
 }
