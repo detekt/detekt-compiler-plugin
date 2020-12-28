@@ -22,6 +22,14 @@ detekt {
 }
 ```
 
+detekt plugins can be added to your project using the `detektPlugins` configuration:
+
+```kotlin
+dependencies {
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:<version>")
+}
+```
+
 ### Limitations
 
 Everything our Gradle plugin (`DetektExtension`) supports, is also supported on the declaration side with this plugin.  

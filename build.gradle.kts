@@ -51,7 +51,6 @@ dependencies {
     implementation("io.gitlab.arturbosch.detekt:detekt-tooling:$detektVersion")
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-core:$detektVersion")
     runtimeOnly("io.gitlab.arturbosch.detekt:detekt-rules:$detektVersion")
-    runtimeOnly("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
 
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestVersion")
