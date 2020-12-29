@@ -1,9 +1,11 @@
 package io.github.detekt.gradle
 
 import io.github.detekt.compiler.plugin.Options
-import io.github.detekt.gradle.extensions.DetektExtension
+import io.github.detekt.gradle.extensions.ProjectDetektExtension
+import io.github.detekt.gradle.extensions.KotlinCompileTaskDetektExtension
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.reporting.ReportingExtension
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -22,7 +25,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.pluginManager.apply(ReportingBasePlugin::class.java)
-        val extension = target.extensions.create(DETEKT_NAME, DetektExtension::class.java)
+        val extension = target.extensions.create(DETEKT_NAME, ProjectDetektExtension::class.java)
         extension.reportsDir = target.extensions.getByType(ReportingExtension::class.java).file(DETEKT_NAME)
         extension.excludes.add("**/${target.relativePath(target.buildDir)}/**")
 
@@ -37,12 +40,20 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
             configuration.isTransitive = true
             configuration.description = "The $CONFIGURATION_DETEKT_PLUGINS libraries to be used for this project."
         }
+
+        target.tasks.withType(KotlinCompile::class.java).configureEach { task ->
+            task.extensions.create(DETEKT_NAME, KotlinCompileTaskDetektExtension::class.java, target)
+        }
     }
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
+        val providers = project.providers
 
-        val extension = project.extensions.getByType(DetektExtension::class.java)
+        val extension = project.extensions.getByType(ProjectDetektExtension::class.java)
+        val taskExtension = kotlinCompilation.compileKotlinTask.extensions.getByType(KotlinCompileTaskDetektExtension::class.java)
+
+        val reportsDir: Provider<RegularFile> = project.layout.file(providers.provider { extension.reportsDir })
 
         project.configurations.getByName("kotlinCompilerPluginClasspath").apply {
             extendsFrom(project.configurations.getAt(CONFIGURATION_DETEKT_PLUGINS))
@@ -55,6 +66,20 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
             add(SubpluginOption(Options.useDefaultConfig, extension.buildUponDefaultConfig.toString()))
             add(SubpluginOption(Options.rootPath, project.rootDir.toString()))
             add(SubpluginOption(Options.excludes, extension.excludes.get().encodeToBase64()))
+
+            taskExtension.reports.all { report ->
+                report.enabled.convention(true)
+                report.destination.convention(
+                    project.layout.projectDirectory.file(providers.provider {
+                        val reportFileName = "${kotlinCompilation.name}.${report.name}"
+                        File(reportsDir.get().asFile, reportFileName).absolutePath
+                    })
+                )
+
+                if (report.enabled.get()) {
+                    add(SubpluginOption(Options.report, "${report.name}:${report.destination.asFile.get().absolutePath}"))
+                }
+            }
         }
 
         extension.baseline?.let { options.add(SubpluginOption(Options.baseline, it.toString())) }

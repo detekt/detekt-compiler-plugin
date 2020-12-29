@@ -62,6 +62,14 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             "<base64-encoded globs>",
             "A base64-encoded list of the globs used to exclude paths from scanning.",
             false
+        ),
+        CliOption(
+            Options.report,
+            "<report-id:path>",
+            "Generates a report for given 'report-id' and stores it on given 'path'. " +
+                    "Available 'report-id' values: 'txt', 'xml', 'html'.",
+            false,
+            allowMultipleOccurrences = true
         )
     )
 
@@ -74,6 +82,7 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             Options.useDefaultConfig -> configuration.put(Keys.USE_DEFAULT_CONFIG, value)
             Options.rootPath -> configuration.put(Keys.ROOT_PATH, Paths.get(value))
             Options.excludes -> configuration.put(Keys.EXCLUDES, value.decodeToGlobSet())
+            Options.report -> configuration.put(Keys.REPORTS, value.substringBefore(':'), Paths.get(value.substringAfter(':')))
         }
     }
 }
