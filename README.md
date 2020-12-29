@@ -32,6 +32,7 @@ dependencies {
 
 Reports can be customized using the `detekt` extension which is added to `KotlinCompile` tasks. Using Groovy this might
 look like:
+
 ```groovy
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     detekt {
