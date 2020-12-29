@@ -12,20 +12,9 @@ open class ProjectDetektExtension constructor(@Inject val objects: ObjectFactory
     var isEnabled: Boolean = true
     var baseline: File? = null
     var debug: Boolean = false
-    var parallel: Boolean = false
-    var failFast: Boolean = false
     var buildUponDefaultConfig: Boolean = true
-    var disableDefaultRuleSets: Boolean = false
-    var autoCorrect: Boolean = false
 
     var config: ConfigurableFileCollection = objects.fileCollection()
     val excludes: SetProperty<String> = objects.setProperty(String::class.java)
 
-    var ignoreFailures: Boolean
-        @JvmName("ignoreFailures_")
-        get() = isIgnoreFailures
-        @JvmName("ignoreFailures_")
-        set(value) {
-            isIgnoreFailures = value
-        }
 }
