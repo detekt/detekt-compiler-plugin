@@ -14,7 +14,7 @@ open class ProjectDetektExtension constructor(@Inject val objects: ObjectFactory
     var debug: Boolean = false
     var buildUponDefaultConfig: Boolean = true
 
-    var config: ConfigurableFileCollection = objects.fileCollection()
+    val config: ConfigurableFileCollection = objects.fileCollection()
     val excludes: SetProperty<String> = objects.setProperty(String::class.java)
 
 }

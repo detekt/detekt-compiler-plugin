@@ -32,7 +32,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         val defaultConfigFile = getDefaultConfigFile(target)
 
         if (defaultConfigFile.exists()) {
-            extension.config = target.files(defaultConfigFile)
+            extension.config.setFrom(target.files(defaultConfigFile))
         }
 
         target.configurations.create(CONFIGURATION_DETEKT_PLUGINS) { configuration ->
