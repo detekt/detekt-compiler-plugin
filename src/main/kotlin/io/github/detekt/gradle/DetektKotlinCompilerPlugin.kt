@@ -29,6 +29,10 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         extension.reportsDir = target.extensions.getByType(ReportingExtension::class.java).file(DETEKT_NAME)
         extension.excludes.add("**/${target.relativePath(target.buildDir)}/**")
 
+        extension.isEnabled.convention(true)
+        extension.debug.convention(false)
+        extension.buildUponDefaultConfig.convention(true)
+
         val defaultConfigFile = getDefaultConfigFile(target)
 
         if (defaultConfigFile.exists()) {
@@ -60,10 +64,10 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         }
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
-            add(SubpluginOption(Options.debug, extension.debug.toString()))
+            add(SubpluginOption(Options.debug, extension.debug.get().toString()))
             add(SubpluginOption(Options.configDigest, extension.config.toDigest()))
-            add(SubpluginOption(Options.isEnabled, extension.isEnabled.toString()))
-            add(SubpluginOption(Options.useDefaultConfig, extension.buildUponDefaultConfig.toString()))
+            add(SubpluginOption(Options.isEnabled, extension.isEnabled.get().toString()))
+            add(SubpluginOption(Options.useDefaultConfig, extension.buildUponDefaultConfig.get().toString()))
             add(SubpluginOption(Options.rootPath, project.rootDir.toString()))
             add(SubpluginOption(Options.excludes, extension.excludes.get().encodeToBase64()))
 
@@ -82,7 +86,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        extension.baseline?.let { options.add(SubpluginOption(Options.baseline, it.toString())) }
+        extension.baseline.getOrNull()?.let { options.add(SubpluginOption(Options.baseline, it.toString())) }
         if (extension.config.any()) {
             options.add(SubpluginOption(Options.config, extension.config.joinToString(",")))
         }
