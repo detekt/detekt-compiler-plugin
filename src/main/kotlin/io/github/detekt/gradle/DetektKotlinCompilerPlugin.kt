@@ -46,7 +46,14 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         }
 
         target.tasks.withType(KotlinCompile::class.java).configureEach { task ->
-            task.extensions.create(DETEKT_NAME, KotlinCompileTaskDetektExtension::class.java, target)
+            task.extensions.create(DETEKT_NAME, KotlinCompileTaskDetektExtension::class.java, target).apply {
+                enabled.convention(extension.isEnabled)
+                baseline.convention(extension.baseline)
+                debug.convention(extension.debug)
+                buildUponDefaultConfig.convention(extension.buildUponDefaultConfig)
+                config.setFrom(target.files(defaultConfigFile))
+                excludes.convention(extension.excludes)
+            }
         }
     }
 
@@ -64,12 +71,12 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         }
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
-            add(SubpluginOption(Options.debug, extension.debug.get().toString()))
-            add(SubpluginOption(Options.configDigest, extension.config.toDigest()))
-            add(SubpluginOption(Options.isEnabled, extension.isEnabled.get().toString()))
-            add(SubpluginOption(Options.useDefaultConfig, extension.buildUponDefaultConfig.get().toString()))
+            add(SubpluginOption(Options.debug, taskExtension.debug.get().toString()))
+            add(SubpluginOption(Options.configDigest, taskExtension.config.toDigest()))
+            add(SubpluginOption(Options.isEnabled, taskExtension.enabled.get().toString()))
+            add(SubpluginOption(Options.useDefaultConfig, taskExtension.buildUponDefaultConfig.get().toString()))
             add(SubpluginOption(Options.rootPath, project.rootDir.toString()))
-            add(SubpluginOption(Options.excludes, extension.excludes.get().encodeToBase64()))
+            add(SubpluginOption(Options.excludes, taskExtension.excludes.get().encodeToBase64()))
 
             taskExtension.reports.all { report ->
                 report.enabled.convention(true)
@@ -86,9 +93,9 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        extension.baseline.getOrNull()?.let { options.add(SubpluginOption(Options.baseline, it.toString())) }
-        if (extension.config.any()) {
-            options.add(SubpluginOption(Options.config, extension.config.joinToString(",")))
+        taskExtension.baseline.getOrNull()?.let { options.add(SubpluginOption(Options.baseline, it.toString())) }
+        if (taskExtension.config.any()) {
+            options.add(SubpluginOption(Options.config, taskExtension.config.joinToString(",")))
         }
 
         return options
