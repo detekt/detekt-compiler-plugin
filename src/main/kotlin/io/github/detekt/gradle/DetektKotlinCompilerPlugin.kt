@@ -24,36 +24,33 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.pluginManager.apply(ReportingBasePlugin::class.java)
-        val extension = target.extensions.create(DETEKT_NAME, ProjectDetektExtension::class.java)
-        extension.reportsDir.convention(
-            target.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(DETEKT_NAME)
-        )
-        extension.excludes.add("**/${target.relativePath(target.buildDir)}/**")
 
-        extension.isEnabled.convention(true)
-        extension.debug.convention(false)
-        extension.buildUponDefaultConfig.convention(true)
+        val projectExtension = target.extensions.create(DETEKT_NAME, ProjectDetektExtension::class.java).apply {
+            reportsDir.convention(
+                target.extensions.getByType(ReportingExtension::class.java).baseDirectory.dir(DETEKT_NAME)
+            )
+            excludes.add("**/${target.relativePath(target.buildDir)}/**")
 
-        val defaultConfigFile = getDefaultConfigFile(target)
-
-        if (defaultConfigFile.exists()) {
-            extension.config.setFrom(target.files(defaultConfigFile))
+            isEnabled.convention(true)
+            debug.convention(false)
+            buildUponDefaultConfig.convention(true)
+            config.from(target.rootProject.layout.projectDirectory.dir(CONFIG_DIR_NAME).file(CONFIG_FILE))
         }
 
-        target.configurations.create(CONFIGURATION_DETEKT_PLUGINS) { configuration ->
-            configuration.isVisible = false
-            configuration.isTransitive = true
-            configuration.description = "The $CONFIGURATION_DETEKT_PLUGINS libraries to be used for this project."
+        target.configurations.create(CONFIGURATION_DETEKT_PLUGINS).apply {
+            isVisible = false
+            isTransitive = true
+            description = "The $CONFIGURATION_DETEKT_PLUGINS libraries to be used for this project."
         }
 
         target.tasks.withType(KotlinCompile::class.java).configureEach { task ->
             task.extensions.create(DETEKT_NAME, KotlinCompileTaskDetektExtension::class.java, target).apply {
-                enabled.convention(extension.isEnabled)
-                baseline.convention(extension.baseline)
-                debug.convention(extension.debug)
-                buildUponDefaultConfig.convention(extension.buildUponDefaultConfig)
-                config.setFrom(target.files(defaultConfigFile))
-                excludes.convention(extension.excludes)
+                enabled.convention(projectExtension.isEnabled)
+                baseline.convention(projectExtension.baseline)
+                debug.convention(projectExtension.debug)
+                buildUponDefaultConfig.convention(projectExtension.buildUponDefaultConfig)
+                config.from(projectExtension.config)
+                excludes.convention(projectExtension.excludes)
             }
         }
     }
@@ -61,8 +58,9 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
-        val extension = project.extensions.getByType(ProjectDetektExtension::class.java)
-        val taskExtension = kotlinCompilation.compileKotlinTask.extensions.getByType(KotlinCompileTaskDetektExtension::class.java)
+        val projectExtension = project.extensions.getByType(ProjectDetektExtension::class.java)
+        val taskExtension =
+            kotlinCompilation.compileKotlinTask.extensions.getByType(KotlinCompileTaskDetektExtension::class.java)
 
         project.configurations.getByName("kotlinCompilerPluginClasspath").apply {
             extendsFrom(project.configurations.getAt(CONFIGURATION_DETEKT_PLUGINS))
@@ -78,10 +76,17 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
             taskExtension.reports.all { report ->
                 report.enabled.convention(true)
-                report.destination.convention(extension.reportsDir.file("${kotlinCompilation.name}.${report.name}"))
+                report.destination.convention(
+                    projectExtension.reportsDir.file("${kotlinCompilation.name}.${report.name}")
+                )
 
                 if (report.enabled.get()) {
-                    add(SubpluginOption(Options.report, "${report.name}:${report.destination.asFile.get().absolutePath}"))
+                    add(
+                        SubpluginOption(
+                            Options.report,
+                            "${report.name}:${report.destination.asFile.get().absolutePath}"
+                        )
+                    )
                 }
             }
         }
@@ -101,9 +106,6 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =
         kotlinCompilation.platformType in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
-
-    private fun getDefaultConfigFile(target: Project) =
-        target.file("${target.rootProject.layout.projectDirectory.dir(CONFIG_DIR_NAME)}/$CONFIG_FILE")
 }
 
 internal fun ConfigurableFileCollection.toDigest(): String {

@@ -4,23 +4,22 @@ import io.github.detekt.compiler.plugin.Keys
 import io.github.detekt.tooling.api.spec.ProcessingSpec
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import java.nio.file.Paths
 
 internal fun CompilerConfiguration.toSpec(log: MessageCollector) = ProcessingSpec.invoke {
     config {
-        configPaths = get(Keys.CONFIG)?.split(",;")?.map { Paths.get(it) } ?: emptyList()
-        useDefaultConfig = get(Keys.USE_DEFAULT_CONFIG)?.toBoolean() ?: false
+        configPaths = getList(Keys.CONFIG)
+        useDefaultConfig = get(Keys.USE_DEFAULT_CONFIG, false)
     }
     baseline {
-        path = get(Keys.BASELINE)?.let { Paths.get(it) }
+        path = get(Keys.BASELINE)
     }
     logging {
-        debug = get(Keys.DEBUG) ?: false
+        debug = get(Keys.DEBUG, false)
         outputChannel = AppendableAdapter { log.info(it) }
         errorChannel = AppendableAdapter { log.error(it) }
     }
     reports {
-        get(Keys.REPORTS)?.forEach {
+        getMap(Keys.REPORTS).forEach {
             report { Pair(it.key, it.value) }
         }
     }

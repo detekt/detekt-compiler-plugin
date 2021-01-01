@@ -8,7 +8,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import javax.inject.Inject
 
-open class ProjectDetektExtension constructor(@Inject val objects: ObjectFactory) {
+open class ProjectDetektExtension @Inject constructor(objects: ObjectFactory) {
 
     val isEnabled: Property<Boolean> = objects.property(Boolean::class.java)
     val baseline: RegularFileProperty = objects.fileProperty()
