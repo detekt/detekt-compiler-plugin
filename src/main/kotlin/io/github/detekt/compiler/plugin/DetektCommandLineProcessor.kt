@@ -3,6 +3,7 @@ package io.github.detekt.compiler.plugin
 import io.github.detekt.gradle.DETEKT_COMPILER_PLUGIN
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
+import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.ByteArrayInputStream
@@ -83,6 +84,7 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             Options.rootPath -> configuration.put(Keys.ROOT_PATH, Paths.get(value))
             Options.excludes -> configuration.put(Keys.EXCLUDES, value.decodeToGlobSet())
             Options.report -> configuration.put(Keys.REPORTS, value.substringBefore(':'), Paths.get(value.substringAfter(':')))
+            else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }
 }
