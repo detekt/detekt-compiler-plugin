@@ -185,7 +185,7 @@ gradlePlugin {
     plugins {
         register("detektCompilerPlugin") {
             id = "io.github.detekt.gradle.compiler-plugin"
-            implementationClass = "io.github.detekt.gradle.DetektGradlePlugin"
+            implementationClass = "io.github.detekt.gradle.DetektKotlinCompilerPlugin"
         }
     }
 }
