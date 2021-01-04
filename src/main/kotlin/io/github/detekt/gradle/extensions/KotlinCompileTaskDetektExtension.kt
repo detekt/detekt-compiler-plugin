@@ -9,9 +9,11 @@ open class KotlinCompileTaskDetektExtension(project: Project) {
         reports.create("xml")
         reports.create("txt")
         reports.create("html")
+        reports.create("sarif") { it.enabled.set(false) }
     }
 
     fun getXml() = reports.getByName("xml")
     fun getHtml() = reports.getByName("html")
     fun getTxt() = reports.getByName("txt")
+    fun getSarif() = reports.getByName("sarif")
 }
