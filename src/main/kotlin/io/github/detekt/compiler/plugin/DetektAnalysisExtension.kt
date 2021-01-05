@@ -18,7 +18,7 @@ class DetektAnalysisExtension(
     private val log: MessageCollector,
     private val spec: ProcessingSpec,
     private val rootPath: Path,
-    private val excludes: Set<String>
+    private val excludes: Collection<String>
 ) : AnalysisHandlerExtension {
 
     override fun analysisCompleted(

@@ -27,7 +27,7 @@ class DetektComponentRegistrar : ComponentRegistrar {
                 messageCollector,
                 configuration.toSpec(messageCollector),
                 configuration.get(Keys.ROOT_PATH, Paths.get(System.getProperty("user.dir"))),
-                configuration.get(Keys.EXCLUDES, emptySet())
+                configuration.getList(Keys.EXCLUDES)
             )
         )
     }

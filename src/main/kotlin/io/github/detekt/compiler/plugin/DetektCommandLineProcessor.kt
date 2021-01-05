@@ -76,11 +76,11 @@ class DetektCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option.optionName) {
-            Options.baseline -> configuration.put(Keys.BASELINE, value)
-            Options.config -> configuration.put(Keys.CONFIG, value)
+            Options.baseline -> configuration.put(Keys.BASELINE, Paths.get(value))
+            Options.config -> configuration.put(Keys.CONFIG, value.split(",;").map { Paths.get(it) })
             Options.debug -> configuration.put(Keys.DEBUG, value.toBoolean())
             Options.isEnabled -> configuration.put(Keys.IS_ENABLED, value.toBoolean())
-            Options.useDefaultConfig -> configuration.put(Keys.USE_DEFAULT_CONFIG, value)
+            Options.useDefaultConfig -> configuration.put(Keys.USE_DEFAULT_CONFIG, value.toBoolean())
             Options.rootPath -> configuration.put(Keys.ROOT_PATH, Paths.get(value))
             Options.excludes -> configuration.put(Keys.EXCLUDES, value.decodeToGlobSet())
             Options.report -> configuration.put(Keys.REPORTS, value.substringBefore(':'), Paths.get(value.substringAfter(':')))
@@ -89,12 +89,12 @@ class DetektCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-private fun String.decodeToGlobSet(): Set<String> {
+private fun String.decodeToGlobSet(): List<String> {
     val b = Base64.getDecoder().decode(this)
     val bi = ByteArrayInputStream(b)
 
     return ObjectInputStream(bi).use { inputStream ->
-        val globs = mutableSetOf<String>()
+        val globs = mutableListOf<String>()
 
         repeat(inputStream.readInt()) {
             globs.add(inputStream.readUTF())

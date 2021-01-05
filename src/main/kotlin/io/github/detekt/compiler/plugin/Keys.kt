@@ -20,10 +20,10 @@ object Keys {
 
     val DEBUG = CompilerConfigurationKey.create<Boolean>(Options.debug)
     val IS_ENABLED = CompilerConfigurationKey.create<Boolean>(Options.isEnabled)
-    val CONFIG = CompilerConfigurationKey.create<String>(Options.config)
-    val BASELINE = CompilerConfigurationKey.create<String>(Options.baseline)
-    val USE_DEFAULT_CONFIG = CompilerConfigurationKey.create<String>(Options.useDefaultConfig)
+    val CONFIG = CompilerConfigurationKey.create<List<Path>>(Options.config)
+    val BASELINE = CompilerConfigurationKey.create<Path>(Options.baseline)
+    val USE_DEFAULT_CONFIG = CompilerConfigurationKey.create<Boolean>(Options.useDefaultConfig)
     val ROOT_PATH = CompilerConfigurationKey.create<Path>(Options.rootPath)
-    val EXCLUDES = CompilerConfigurationKey.create<Set<String>>(Options.excludes)
+    val EXCLUDES = CompilerConfigurationKey.create<List<String>>(Options.excludes)
     val REPORTS = CompilerConfigurationKey.create<Map<String, Path>>(Options.report)
 }
