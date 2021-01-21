@@ -21,6 +21,7 @@ object Keys {
     val DEBUG = CompilerConfigurationKey.create<Boolean>(Options.debug)
     val IS_ENABLED = CompilerConfigurationKey.create<Boolean>(Options.isEnabled)
     val CONFIG = CompilerConfigurationKey.create<List<Path>>(Options.config)
+    val CONFIG_DIGEST = CompilerConfigurationKey.create<String>(Options.configDigest)
     val BASELINE = CompilerConfigurationKey.create<Path>(Options.baseline)
     val USE_DEFAULT_CONFIG = CompilerConfigurationKey.create<Boolean>(Options.useDefaultConfig)
     val ROOT_PATH = CompilerConfigurationKey.create<Path>(Options.rootPath)

@@ -78,6 +78,7 @@ class DetektCommandLineProcessor : CommandLineProcessor {
         when (option.optionName) {
             Options.baseline -> configuration.put(Keys.BASELINE, Paths.get(value))
             Options.config -> configuration.put(Keys.CONFIG, value.split(",;").map { Paths.get(it) })
+            Options.configDigest -> configuration.put(Keys.CONFIG_DIGEST, value)
             Options.debug -> configuration.put(Keys.DEBUG, value.toBoolean())
             Options.isEnabled -> configuration.put(Keys.IS_ENABLED, value.toBoolean())
             Options.useDefaultConfig -> configuration.put(Keys.USE_DEFAULT_CONFIG, value.toBoolean())
