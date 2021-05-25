@@ -10,8 +10,6 @@ val detektPluginVersion: String by project
 group = "io.github.detekt"
 version = detektPluginVersion
 
-val bintrayUser: String? = findProperty("bintrayUser")?.toString() ?: System.getenv("BINTRAY_USER")
-val bintrayKey: String? = findProperty("bintrayKey")?.toString() ?: System.getenv("BINTRAY_API_KEY")
 val detektPublication = "DetektPublication"
 
 plugins {
@@ -134,45 +132,6 @@ val javadocJar by tasks.registering(Jar::class) {
 artifacts {
     archives(sourcesJar)
     archives(javadocJar)
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "bintray"
-            url = uri(
-                "https://api.bintray.com/maven/arturbosch/code-analysis/detekt-compiler-plugin/" +
-                    ";publish=1;override=1"
-            )
-            credentials {
-                username = bintrayUser
-                password = bintrayKey
-            }
-        }
-    }
-    publications.create<MavenPublication>(detektPublication) {
-        from(components["java"])
-        artifact(sourcesJar)
-        artifact(javadocJar)
-        groupId = rootProject.group as? String
-        artifactId = rootProject.name
-        version = rootProject.version as? String
-        pom {
-            description.set("Static code analysis for Kotlin as a compiler plugin.")
-            name.set("detekt-compiler-plugin")
-            url.set("https://detekt.github.io/detekt")
-            licenses {
-                license {
-                    name.set("The Apache Software License, Version 2.0")
-                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    distribution.set("repo")
-                }
-            }
-            scm {
-                url.set("https://github.com/detekt/detekt")
-            }
-        }
-    }
 }
 
 gradlePlugin {
