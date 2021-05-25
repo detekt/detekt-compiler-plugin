@@ -1,10 +1,5 @@
-rootProject.name = "detekt-compiler-plugin"
+rootProject.name = "detekt-compiler-plugin-composite-build"
 
 enableFeaturePreview("VERSION_CATALOGS")
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        mavenLocal()
-    }
-}
+includeBuild("plugin-build")
