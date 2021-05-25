@@ -3,13 +3,9 @@ import de.undercouch.gradle.tasks.download.Verify
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val assertJVersion: String by project
-val detektVersion: String by project
 val kotlinVersion: String by project
 val kotlinCompilerChecksum: String by project
-val kotlinCompileTestVersion: String by project
 val detektPluginVersion: String by project
-val spekVersion: String by project
 
 group = "io.github.detekt"
 version = detektPluginVersion
@@ -19,10 +15,10 @@ val bintrayKey: String? = findProperty("bintrayKey")?.toString() ?: System.geten
 val detektPublication = "DetektPublication"
 
 plugins {
-    kotlin("jvm")
+    kotlin("jvm") version kotlinVersion
     id("com.github.ben-manes.versions")
-    `maven-publish`
-    `java-gradle-plugin`
+    id("maven-publish")
+    id("java-gradle-plugin")
     id("com.gradle.plugin-publish")
     id("io.github.detekt.gradle.compiler-plugin")
     id("com.github.johnrengelman.shadow")
@@ -34,29 +30,26 @@ detekt {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     mavenLocal()
-    maven { setUrl("https://dl.bintray.com/arturbosch/code-analysis") }
-    maven {
-        setUrl("https://dl.bintray.com/spekframework/spek-dev")
-    }
 }
 
 dependencies {
     compileOnly(gradleApi())
-    compileOnly(kotlin("gradle-plugin", kotlinVersion))
-    compileOnly(kotlin("gradle-plugin-api", kotlinVersion))
-    compileOnly(kotlin("stdlib", kotlinVersion))
-    compileOnly(kotlin("compiler-embeddable", kotlinVersion))
-    implementation("io.gitlab.arturbosch.detekt:detekt-api:$detektVersion")
-    implementation("io.gitlab.arturbosch.detekt:detekt-tooling:$detektVersion")
-    runtimeOnly("io.gitlab.arturbosch.detekt:detekt-core:$detektVersion")
-    runtimeOnly("io.gitlab.arturbosch.detekt:detekt-rules:$detektVersion")
+    compileOnly(kotlin("gradle-plugin"))
+    compileOnly(kotlin("gradle-plugin-api"))
+    compileOnly(kotlin("stdlib"))
+    compileOnly(kotlin("compiler-embeddable"))
 
-    testImplementation("org.assertj:assertj-core:$assertJVersion")
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestVersion")
-    testImplementation( "org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
-    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
+    implementation(libs.detekt.api)
+    implementation(libs.detekt.tooling)
+    runtimeOnly(libs.detekt.core)
+    runtimeOnly(libs.detekt.rules)
+
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.kotlinCompileTesting)
+    testImplementation(libs.spek.dsl)
+    testRuntimeOnly(libs.spek.runner)
 }
 
 tasks.shadowJar.configure {

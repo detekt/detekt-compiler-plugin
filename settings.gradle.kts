@@ -1,5 +1,7 @@
 rootProject.name = "detekt-compiler-plugin"
 
+enableFeaturePreview("VERSION_CATALOGS")
+
 pluginManagement {
     val downloadVersion: String by settings
     val gradleVersionsPluginVersion: String by settings
