@@ -15,13 +15,14 @@ val bintrayKey: String? = findProperty("bintrayKey")?.toString() ?: System.geten
 val detektPublication = "DetektPublication"
 
 plugins {
-    kotlin("jvm") version kotlinVersion
-    id("com.github.ben-manes.versions")
+    kotlin("jvm") version "1.4.32"
     id("maven-publish")
     id("java-gradle-plugin")
-    id("com.gradle.plugin-publish")
-    id("io.github.detekt.gradle.compiler-plugin")
-    id("com.github.johnrengelman.shadow")
+    id("com.gradle.plugin-publish") version "0.14.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("de.undercouch.download") version "4.1.1"
+    id("io.github.detekt.gradle.compiler-plugin") version "0.3.3"
 }
 
 detekt {
