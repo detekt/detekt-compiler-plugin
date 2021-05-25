@@ -18,7 +18,7 @@ plugins {
     id("java-gradle-plugin")
     id("com.gradle.plugin-publish") version "0.14.0"
     id("com.github.ben-manes.versions") version "0.38.0"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
     id("de.undercouch.download") version "4.1.1"
 }
 
@@ -43,6 +43,11 @@ dependencies {
     testImplementation(libs.kotlinCompileTesting)
     testImplementation(libs.spek.dsl)
     testRuntimeOnly(libs.spek.runner)
+}
+
+val javaComponent = components["java"] as AdhocComponentWithVariants
+javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
+    skip()
 }
 
 tasks.shadowJar.configure {
