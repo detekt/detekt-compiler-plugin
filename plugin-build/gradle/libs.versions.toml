@@ -1,0 +1,23 @@
+[versions]
+
+assertj = "3.19.0"
+detekt = "1.17.1"
+kotlin = "1.4.32"
+kotlinCompileTesting = "1.3.1"
+spek = "2.0.15"
+
+[libraries]
+
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+
+detekt-api = { module = "io.gitlab.arturbosch.detekt:detekt-api", version.ref = "detekt" }
+detekt-core = { module = "io.gitlab.arturbosch.detekt:detekt-core", version.ref = "detekt" }
+detekt-rules = { module = "io.gitlab.arturbosch.detekt:detekt-rules", version.ref = "detekt" }
+detekt-tooling = { module = "io.gitlab.arturbosch.detekt:detekt-tooling", version.ref = "detekt" }
+
+kotlinCompileTesting = { module = "com.github.tschuchortdev:kotlin-compile-testing", version.ref = "kotlinCompileTesting" }
+
+spek-dsl = { module = "org.spekframework.spek2:spek-dsl-jvm", version.ref = "spek" }
+spek-runner = { module = "org.spekframework.spek2:spek-runner-junit5", version.ref = "spek" }
+
+[bundles]
