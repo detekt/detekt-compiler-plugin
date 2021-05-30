@@ -1,5 +1,6 @@
 import de.undercouch.gradle.tasks.download.Download
 import de.undercouch.gradle.tasks.download.Verify
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
@@ -41,8 +42,7 @@ dependencies {
 
     testImplementation(libs.assertj.core)
     testImplementation(libs.kotlinCompileTesting)
-    testImplementation(libs.spek.dsl)
-    testRuntimeOnly(libs.spek.runner)
+    testImplementation(libs.junit.jupiter)
 }
 
 val javaComponent = components["java"] as AdhocComponentWithVariants
@@ -115,6 +115,22 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs = listOf(
         "-Xopt-in=kotlin.RequiresOptIn"
     )
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+    testLogging {
+        events = setOf(
+            TestLogEvent.FAILED,
+            TestLogEvent.STANDARD_ERROR,
+            TestLogEvent.STANDARD_OUT,
+            TestLogEvent.SKIPPED
+        )
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
