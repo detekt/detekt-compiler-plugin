@@ -53,6 +53,25 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             false
         ),
         CliOption(
+            Options.allRules,
+            "<true|false>",
+            "Turns on all the rules.",
+            false
+        ),
+        CliOption(
+            Options.disableDefaultRuleSets,
+            "<true|false>",
+            "Disables all default detekt rulesets and will only run detekt with custom rules " +
+                    "defined in plugins passed in with `detektPlugins` configuration.",
+            false
+        ),
+        CliOption(
+            Options.parallel,
+            "<true|false>",
+            "Enables parallel compilation and analysis of source files.",
+            false
+        ),
+        CliOption(
             Options.rootPath,
             "<path>",
             "Root path used to relativize paths when using exclude patterns.",
@@ -82,6 +101,9 @@ class DetektCommandLineProcessor : CommandLineProcessor {
             Options.debug -> configuration.put(Keys.DEBUG, value.toBoolean())
             Options.isEnabled -> configuration.put(Keys.IS_ENABLED, value.toBoolean())
             Options.useDefaultConfig -> configuration.put(Keys.USE_DEFAULT_CONFIG, value.toBoolean())
+            Options.allRules -> configuration.put(Keys.ALL_RULES, value.toBoolean())
+            Options.disableDefaultRuleSets -> configuration.put(Keys.DISABLE_DEFAULT_RULE_SETS, value.toBoolean())
+            Options.parallel -> configuration.put(Keys.PARALLEL, value.toBoolean())
             Options.rootPath -> configuration.put(Keys.ROOT_PATH, Paths.get(value))
             Options.excludes -> configuration.put(Keys.EXCLUDES, value.decodeToGlobSet())
             Options.report -> configuration.put(Keys.REPORTS, value.substringBefore(':'), Paths.get(value.substringAfter(':')))
