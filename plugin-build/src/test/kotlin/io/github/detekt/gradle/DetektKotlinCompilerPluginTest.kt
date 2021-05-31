@@ -14,6 +14,12 @@ class DetektKotlinCompilerPluginTest {
 
         val fileCollection = project.files(file1, file2)
 
-        assertThat(fileCollection.toDigest()).isEqualTo("Jm9xCn/w7YEc0RCR2iD6gUbr7BNxejj3Tvp871W/JEY=")
+        val expectedDigest = if ("win" in System.getProperty("os.name")) {
+            "4NwcqDfQOdBVnJx6wqUnyL+9Zr4ClzGz1nSlRKaz23Q="
+        } else {
+            "Jm9xCn/w7YEc0RCR2iD6gUbr7BNxejj3Tvp871W/JEY="
+        }
+
+        assertThat(fileCollection.toDigest()).isEqualTo(expectedDigest)
     }
 }
