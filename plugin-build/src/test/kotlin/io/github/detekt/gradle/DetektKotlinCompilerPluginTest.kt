@@ -3,6 +3,7 @@ package io.github.detekt.gradle
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Test
+import java.util.Locale
 
 class DetektKotlinCompilerPluginTest {
 
@@ -14,7 +15,7 @@ class DetektKotlinCompilerPluginTest {
 
         val fileCollection = project.files(file1, file2)
 
-        val expectedDigest = if ("win" in System.getProperty("os.name")) {
+        val expectedDigest = if ("win" in System.getProperty("os.name").toLowerCase(Locale.ROOT)) {
             "4NwcqDfQOdBVnJx6wqUnyL+9Zr4ClzGz1nSlRKaz23Q="
         } else {
             "Jm9xCn/w7YEc0RCR2iD6gUbr7BNxejj3Tvp871W/JEY="
