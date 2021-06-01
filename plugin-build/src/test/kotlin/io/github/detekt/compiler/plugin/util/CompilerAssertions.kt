@@ -16,8 +16,8 @@ class CompilationAssert(private val result: KotlinCompilation.Result) :
     private val detektViolations = detektMessages
         .filter { it.startsWith('\t')}
         // We remove the color marker at the beginning of the line
-        .map { it.removePrefix("\t\u001B[33m")}
-        .map { it.split(' ').first() }
+        .map { it.removePrefix("\t\u001B[33m") }
+        .map { it.split(' ').first().trim() }
 
     fun passCompilation(expectedStatus : Boolean = true) = apply {
         val expectedErrorCode = if (expectedStatus) OK else COMPILATION_ERROR
@@ -34,6 +34,7 @@ class CompilationAssert(private val result: KotlinCompilation.Result) :
             .first { "Success?" in it }
             .split(" ")
             .last()
+            .trim()
             .toBoolean()
 
         if (status != expectedStatus) {
