@@ -34,6 +34,9 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
             isEnabled.convention(true)
             debug.convention(false)
             buildUponDefaultConfig.convention(true)
+            allRules.convention(false)
+            disableDefaultRuleSets.convention(false)
+            parallel.convention(false)
             config.from(target.rootProject.layout.projectDirectory.dir(CONFIG_DIR_NAME).file(CONFIG_FILE))
         }
 
@@ -45,10 +48,13 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
         target.tasks.withType(KotlinCompile::class.java).configureEach { task ->
             task.extensions.create(DETEKT_NAME, KotlinCompileTaskDetektExtension::class.java, target).apply {
-                enabled.convention(projectExtension.isEnabled)
+                isEnabled.convention(projectExtension.isEnabled)
                 baseline.convention(projectExtension.baseline)
                 debug.convention(projectExtension.debug)
                 buildUponDefaultConfig.convention(projectExtension.buildUponDefaultConfig)
+                allRules.convention(projectExtension.allRules)
+                disableDefaultRuleSets.convention(projectExtension.disableDefaultRuleSets)
+                parallel.convention(projectExtension.parallel)
                 config.from(projectExtension.config)
                 excludes.convention(projectExtension.excludes)
             }
@@ -69,8 +75,11 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
             add(SubpluginOption(Options.debug, taskExtension.debug.get().toString()))
             add(SubpluginOption(Options.configDigest, taskExtension.config.toDigest()))
-            add(SubpluginOption(Options.isEnabled, taskExtension.enabled.get().toString()))
+            add(SubpluginOption(Options.isEnabled, taskExtension.isEnabled.get().toString()))
             add(SubpluginOption(Options.useDefaultConfig, taskExtension.buildUponDefaultConfig.get().toString()))
+            add(SubpluginOption(Options.allRules, taskExtension.allRules.get().toString()))
+            add(SubpluginOption(Options.disableDefaultRuleSets, taskExtension.disableDefaultRuleSets.get().toString()))
+            add(SubpluginOption(Options.parallel, taskExtension.parallel.get().toString()))
             add(SubpluginOption(Options.rootPath, project.rootDir.toString()))
             add(SubpluginOption(Options.excludes, taskExtension.excludes.get().encodeToBase64()))
 

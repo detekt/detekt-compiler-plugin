@@ -23,4 +23,14 @@ internal fun CompilerConfiguration.toSpec(log: MessageCollector) = ProcessingSpe
             report { Pair(it.key, it.value) }
         }
     }
+    extensions {
+        disableDefaultRuleSets = get(Keys.DISABLE_DEFAULT_RULE_SETS, false)
+    }
+    rules {
+        activateAllRules = get(Keys.ALL_RULES, false)
+    }
+    execution {
+        parallelAnalysis = get(Keys.PARALLEL, false)
+        parallelParsing = get(Keys.PARALLEL, false)
+    }
 }

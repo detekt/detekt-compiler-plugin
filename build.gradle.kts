@@ -6,6 +6,8 @@ plugins {
 detekt {
     debug.set(true)
     isEnabled.set(true)
+    allRules.set(true)
+    parallel.set(true)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
