@@ -117,6 +117,12 @@ tasks.withType<KotlinCompile>().configureEach {
     )
 }
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform {
+        includeEngines("spek2")
+    }
+}
+
 val sourcesJar by tasks.registering(Jar::class) {
     dependsOn(tasks.classes)
     archiveClassifier.set("sources")

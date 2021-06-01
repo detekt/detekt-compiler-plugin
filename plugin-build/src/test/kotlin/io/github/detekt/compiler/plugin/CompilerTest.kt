@@ -1,31 +1,67 @@
 package io.github.detekt.compiler.plugin
 
-import com.tschuchort.compiletesting.KotlinCompilation
-import com.tschuchort.compiletesting.SourceFile
-import org.assertj.core.api.Assertions.assertThat
+import io.github.detekt.compiler.plugin.util.CompilerTestUtils.compile
+import io.github.detekt.compiler.plugin.util.assertThat
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 object CompilerTest: Spek({
     describe("smoke test") {
-        val kotlinSource = SourceFile.kotlin("KClass.kt", """
-        class KClass {
-            fun foo() {
-                val x = 3
-                println(x)
-            }
+        it("with a source file that contains violations") {
+            val result = compile(
+                """
+                class KClass {
+                    fun foo() {
+                        val x = 3
+                        println(x)
+                    }
+                }
+                """
+            )
+
+            assertThat(result)
+                .passCompilation(true)
+                .passDetekt(false)
+                .withViolations(2)
+                .withRuleViolation("MagicNumber", "NewLineAtEndOfFile")
         }
-    """)
 
-        val result = KotlinCompilation().apply {
-            sources = listOf(kotlinSource)
+        it("with a source file that contains local suppression") {
+            val result = compile(
+                """
+                @file:Suppress("NewLineAtEndOfFile")
+                class KClass {
+                    fun foo() {
+                        @Suppress("MagicNumber")
+                        val x = 3
+                        println(x)
+                    }
+                }
+                """
+            )
 
-            compilerPlugins = listOf(DetektComponentRegistrar())
-            commandLineProcessors = listOf(DetektCommandLineProcessor())
-        }.compile()
+            assertThat(result)
+                .passCompilation()
+                .passDetekt()
+                .withNoViolations()
+        }
 
-        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-        assertThat(result.messages).contains("MagicNumber")
-        assertThat(result.messages).contains("Success?: false")
+        it("with a source file that does not contain violations") {
+            val result = compile(
+                """
+                class KClass {
+                    fun foo() {
+                        println("Hello world :)")
+                    }
+                }
+                
+                """
+            )
+
+            assertThat(result)
+                .passCompilation()
+                .passDetekt()
+                .withNoViolations()
+        }
     }
 })
