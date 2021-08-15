@@ -13,9 +13,9 @@ open class ProjectDetektExtension @Inject constructor(objects: ObjectFactory) {
     val isEnabled: Property<Boolean> = objects.property(Boolean::class.java)
     val debug: Property<Boolean> = objects.property(Boolean::class.java)
     val buildUponDefaultConfig: Property<Boolean> = objects.property(Boolean::class.java)
-    var allRules: Property<Boolean> = objects.property(Boolean::class.java)
-    var disableDefaultRuleSets: Property<Boolean> = objects.property(Boolean::class.java)
-    var parallel: Property<Boolean> = objects.property(Boolean::class.java)
+    val allRules: Property<Boolean> = objects.property(Boolean::class.java)
+    val disableDefaultRuleSets: Property<Boolean> = objects.property(Boolean::class.java)
+    val parallel: Property<Boolean> = objects.property(Boolean::class.java)
 
     val baseline: RegularFileProperty = objects.fileProperty()
     val config: ConfigurableFileCollection = objects.fileCollection()
