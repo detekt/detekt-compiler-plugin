@@ -19,6 +19,7 @@ import java.io.File
 import java.io.ObjectOutputStream
 import java.security.MessageDigest
 import java.util.Base64
+import java.util.Properties
 
 class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
@@ -110,8 +111,15 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun getCompilerPluginId(): String = DETEKT_COMPILER_PLUGIN
 
-    override fun getPluginArtifact(): SubpluginArtifact =
-        SubpluginArtifact("io.github.detekt", "detekt-compiler-plugin")
+    override fun getPluginArtifact(): SubpluginArtifact {
+        val props = Properties()
+        val inputStream = javaClass.classLoader.getResourceAsStream("versions.properties")
+
+        inputStream.use { props.load(it) }
+        val version = props.getProperty("detektCompilerPluginVersion")
+
+        return SubpluginArtifact("io.github.detekt", "detekt-compiler-plugin", version)
+    }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =
         kotlinCompilation.platformType in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
