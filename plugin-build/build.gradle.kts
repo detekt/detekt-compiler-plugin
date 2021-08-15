@@ -123,6 +123,19 @@ tasks.withType<Test>().configureEach {
     }
 }
 
+tasks {
+    val writeDetektVersionProperties by registering(WriteProperties::class) {
+        description = "Write the properties file with the Detekt version to be used by the plugin"
+        encoding = "UTF-8"
+        outputFile = file("$buildDir/versions.properties")
+        property("detektCompilerPluginVersion", project.version)
+    }
+
+    processResources {
+        from(writeDetektVersionProperties)
+    }
+}
+
 val sourcesJar by tasks.registering(Jar::class) {
     dependsOn(tasks.classes)
     archiveClassifier.set("sources")
