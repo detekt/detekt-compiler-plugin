@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.5.31"
+    alias(libs.plugins.kotlin)
     id("io.github.detekt.gradle.compiler-plugin")
 }
 

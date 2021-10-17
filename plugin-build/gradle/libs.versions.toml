@@ -20,4 +20,11 @@ kotlinCompileTesting = { module = "com.github.tschuchortdev:kotlin-compile-testi
 spek-dsl = { module = "org.spekframework.spek2:spek-dsl-jvm", version.ref = "spek" }
 spek-runner = { module = "org.spekframework.spek2:spek-runner-junit5", version.ref = "spek" }
 
+[plugins]
+download = { id = "de.undercouch.download", version = "4.1.1" }
+gradleVersionz = { id = "com.github.ben-manes.versions", version = "0.39.0" }
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+pluginPublishing = { id = "com.gradle.plugin-publish", version = "0.15.0" }
+shadow = { id = "com.github.johnrengelman.shadow", version = "7.0.0" }
+
 [bundles]
