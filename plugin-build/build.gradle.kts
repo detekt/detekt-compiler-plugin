@@ -13,7 +13,7 @@ version = detektPluginVersion
 val detektPublication = "DetektPublication"
 
 plugins {
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.5.31"
     id("maven-publish")
     id("java-gradle-plugin")
     id("com.gradle.plugin-publish") version "0.14.0"
