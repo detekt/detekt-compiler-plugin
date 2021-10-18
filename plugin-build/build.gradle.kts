@@ -3,7 +3,8 @@ import de.undercouch.gradle.tasks.download.Verify
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val kotlinVersion: String by project
+val kotlinVersion = libs.versions.kotlin.get()
+
 val kotlinCompilerChecksum: String by project
 val detektPluginVersion: String by project
 
@@ -13,13 +14,13 @@ version = detektPluginVersion
 val detektPublication = "DetektPublication"
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    alias(libs.plugins.kotlin)
     id("maven-publish")
     id("java-gradle-plugin")
-    id("com.gradle.plugin-publish") version "0.14.0"
-    id("com.github.ben-manes.versions") version "0.38.0"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("de.undercouch.download") version "4.1.1"
+    alias(libs.plugins.pluginPublishing)
+    alias(libs.plugins.gradleVersionz)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.download)
 }
 
 repositories {
