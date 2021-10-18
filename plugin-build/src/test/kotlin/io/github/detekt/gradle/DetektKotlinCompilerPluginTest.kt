@@ -15,7 +15,7 @@ object DetektKotlinCompilerPluginTest: Spek({
             val file2 = javaClass.classLoader.getResource("DetektKotlinCompilerPluginTest/hello2.kt")
             val fileCollection = project.files(file1, file2)
 
-            val expectedDigest = if ("win" in System.getProperty("os.name").toLowerCase(Locale.ROOT)) {
+            val expectedDigest = if ("win" in System.getProperty("os.name").lowercase(Locale.ROOT)) {
                 "4NwcqDfQOdBVnJx6wqUnyL+9Zr4ClzGz1nSlRKaz23Q="
             } else {
                 "Jm9xCn/w7YEc0RCR2iD6gUbr7BNxejj3Tvp871W/JEY="
