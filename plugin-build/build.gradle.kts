@@ -3,7 +3,7 @@ import de.undercouch.gradle.tasks.download.Verify
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val kotlinVersion = libs.versions.kotlin.get()
+val kotlinVersion: String = libs.versions.kotlin.get()
 
 val kotlinCompilerChecksum: String by project
 val detektPluginVersion: String by project
@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.kotlin)
     id("maven-publish")
     id("java-gradle-plugin")
+    `jvm-test-suite`
     alias(libs.plugins.pluginPublishing)
     alias(libs.plugins.gradleVersionz)
     alias(libs.plugins.shadow)
@@ -42,8 +43,6 @@ dependencies {
 
     testImplementation(libs.assertj.core)
     testImplementation(libs.kotlinCompileTesting)
-    testImplementation(libs.spek.dsl)
-    testRuntimeOnly(libs.spek.runner)
 }
 
 val javaComponent = components["java"] as AdhocComponentWithVariants
@@ -67,7 +66,7 @@ tasks.shadowJar.configure {
 }
 
 val verifyKotlinCompilerDownload by tasks.registering(Verify::class) {
-    src(file("$rootDir/.kotlinc/kotlin-compiler-$kotlinVersion.zip"))
+    src(file("$rootDir/build/kotlinc/kotlin-compiler-$kotlinVersion.zip"))
     algorithm("SHA-256")
     checksum(kotlinCompilerChecksum)
     outputs.upToDateWhen { true }
@@ -75,7 +74,7 @@ val verifyKotlinCompilerDownload by tasks.registering(Verify::class) {
 
 val downloadKotlinCompiler by tasks.registering(Download::class) {
     src("https://github.com/JetBrains/kotlin/releases/download/v$kotlinVersion/kotlin-compiler-$kotlinVersion.zip")
-    dest(file("$rootDir/.kotlinc/kotlin-compiler-$kotlinVersion.zip"))
+    dest(file("$rootDir/build/kotlinc/kotlin-compiler-$kotlinVersion.zip"))
     overwrite(false)
     finalizedBy(verifyKotlinCompilerDownload)
 }
@@ -83,7 +82,7 @@ val downloadKotlinCompiler by tasks.registering(Download::class) {
 val unzipKotlinCompiler by tasks.registering(Copy::class) {
     dependsOn(downloadKotlinCompiler)
     from(zipTree(downloadKotlinCompiler.get().dest))
-    into(file("$rootDir/.kotlinc/$kotlinVersion"))
+    into(file("$rootDir/build/kotlinc/$kotlinVersion"))
 }
 
 val testPluginKotlinc by tasks.registering(RunTestExecutable::class) {
@@ -102,12 +101,12 @@ val testPluginKotlinc by tasks.registering(RunTestExecutable::class) {
     outputDir = file("$buildDir/tmp/kotlinc")
 
     doLast {
-        if (!errorOutput.toString().contains("MagicNumber - [x] at hello.kt")) {
+        if (!errorOutput.toString().contains("warning: magicNumber:")) {
             throw GradleException(
                 "kotlinc $kotlinVersion run with compiler plugin did not find MagicNumber issue as expected"
             )
         }
-        (this as RunTestExecutable).execResult!!.assertNormalExitValue()
+        (this as RunTestExecutable).executionResult.get().assertNormalExitValue()
     }
 }
 
@@ -119,8 +118,27 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 tasks.withType<Test>().configureEach {
-    useJUnitPlatform {
-        includeEngines("spek2")
+    useJUnitPlatform()
+    testLogging {
+        // set options for log level LIFECYCLE
+        events = setOf(
+            org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+        )
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+        }
     }
 }
 

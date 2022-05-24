@@ -13,11 +13,9 @@ class CompilationAssert(private val result: KotlinCompilation.Result) :
         .dropWhile { "Running detekt" !in it }
         .dropLastWhile { "Success?" !in it }
 
+    private val regex = "\\w+\\.kt:\\d+:\\d+: .* \\[(\\w+)\\]".toRegex()
     private val detektViolations = detektMessages
-        .filter { it.startsWith('\t')}
-        // We remove the color marker at the beginning of the line
-        .map { it.removePrefix("\t\u001B[33m") }
-        .map { it.split(' ').first().trim() }
+        .mapNotNull { line -> regex.find(line)?.groupValues?.get(1) }
 
     fun passCompilation(expectedStatus : Boolean = true) = apply {
         val expectedErrorCode = if (expectedStatus) OK else COMPILATION_ERROR
@@ -60,5 +58,4 @@ class CompilationAssert(private val result: KotlinCompilation.Result) :
                     "but not all were found. Found violations are instead $detektViolations")
         }
     }
-
 }
