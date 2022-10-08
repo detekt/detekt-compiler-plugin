@@ -113,12 +113,11 @@ val testPluginKotlinc by tasks.registering(RunTestExecutable::class) {
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs = listOf(
-        "-Xopt-in=kotlin.RequiresOptIn"
+        "-opt-in=kotlin.RequiresOptIn"
     )
 }
 
 tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
     testLogging {
         // set options for log level LIFECYCLE
         events = setOf(
@@ -137,7 +136,7 @@ tasks.withType<Test>().configureEach {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
+            useJUnitJupiter(libs.versions.junit.get())
         }
     }
 }
