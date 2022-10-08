@@ -2,8 +2,6 @@ import com.gradle.enterprise.gradleplugin.internal.extension.BuildScanExtensionW
 
 rootProject.name = "detekt-compiler-plugin-composite-build"
 
-enableFeaturePreview("VERSION_CATALOGS")
-
 includeBuild("plugin-build")
 
 plugins {
