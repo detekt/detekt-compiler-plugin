@@ -30,34 +30,21 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
-      - name: Cache Gradle Folders
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches/
-            ~/.gradle/wrapper/
-          key: cache-gradle-${{ matrix.os }}-${{ matrix.jdk }}
-          restore-keys: |
-            cache-gradle-${{ matrix.os }}-${{ matrix.jdk }}
-            cache-gradle-${{ matrix.os }}-
-            cache-gradle-
-
-
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.jdk }}
 
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
 
       - name: Build detekt-compiler-plugin
         run: ./gradlew -p plugin-build build --stacktrace
 
-
       - name: Run smoke test
         run: ./gradlew -p plugin-build testPluginKotlinc
         if: ${{ runner.os != 'Windows' }}
-
 
       - name: Run the compiler plugin
         run: ./gradlew compileKotlin
