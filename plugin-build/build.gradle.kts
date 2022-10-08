@@ -54,14 +54,9 @@ tasks.shadowJar.configure {
     relocate("org.jetbrains.kotlin.com.intellij", "com.intellij")
     mergeServiceFiles()
     dependencies {
-        exclude(dependency("org.jetbrains.intellij.deps:trove4j"))
-        exclude(dependency("org.jetbrains:annotations"))
-        exclude(dependency("org.jetbrains.kotlin:kotlin-compiler-embeddable"))
-        exclude(dependency("org.jetbrains.kotlin:kotlin-daemon-embeddable"))
-        exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
-        exclude(dependency("org.jetbrains.kotlin:kotlin-script-runtime"))
-        exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
-        exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-common"))
+        include(dependency("io.gitlab.arturbosch.detekt:.*"))
+        include(dependency("io.github.detekt:.*"))
+        include(dependency("org.yaml:snakeyaml"))
     }
 }
 
