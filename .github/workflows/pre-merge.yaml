@@ -24,14 +24,13 @@ jobs:
 
     env:
       JDK_VERSION:  ${{ matrix.jdk }}
-      GRADLE_OPTS: -Dorg.gradle.daemon=false
 
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.jdk }}
