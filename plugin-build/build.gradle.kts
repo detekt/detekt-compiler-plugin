@@ -57,6 +57,7 @@ tasks.shadowJar.configure {
         include(dependency("io.gitlab.arturbosch.detekt:.*"))
         include(dependency("io.github.detekt:.*"))
         include(dependency("org.yaml:snakeyaml"))
+        include(dependency("io.github.davidburstrom.contester:contester-breakpoint"))
     }
 }
 
@@ -82,15 +83,26 @@ val unzipKotlinCompiler by tasks.registering(Copy::class) {
 
 val testPluginKotlinc by tasks.registering(RunTestExecutable::class) {
     dependsOn(unzipKotlinCompiler, tasks.shadowJar)
-    executable(file("${unzipKotlinCompiler.get().destinationDir}/kotlinc/bin/kotlinc"))
+
     args(
         listOf(
             "$rootDir/src/test/resources/hello.kt",
             "-Xplugin=${tasks.shadowJar.get().archiveFile.get().asFile.absolutePath}",
             "-P",
-            "plugin:detekt-compiler-plugin:debug=true"
         )
     )
+
+    val baseExecutablePath = "${unzipKotlinCompiler.get().destinationDir}/kotlinc/bin/kotlinc"
+    val pluginParameters = "plugin:detekt-compiler-plugin:debug=true"
+
+    if (org.apache.tools.ant.taskdefs.condition.Os.isFamily("windows")) {
+        executable(file("$baseExecutablePath.bat"))
+        args("\"$pluginParameters\"")
+    } else {
+        executable(file(baseExecutablePath))
+        args(pluginParameters)
+    }
+
     errorOutput = ByteArrayOutputStream()
     // dummy path - required for RunTestExecutable task but doesn't do anything
     outputDir = file("$buildDir/tmp/kotlinc")

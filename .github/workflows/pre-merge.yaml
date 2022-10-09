@@ -43,7 +43,6 @@ jobs:
 
       - name: Run smoke test
         run: ./gradlew -p plugin-build testPluginKotlinc
-        if: ${{ runner.os != 'Windows' }}
 
       - name: Run the compiler plugin
         run: ./gradlew compileKotlin
