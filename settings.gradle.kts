@@ -5,7 +5,7 @@ rootProject.name = "detekt-compiler-plugin-composite-build"
 includeBuild("plugin-build")
 
 plugins {
-    `gradle-enterprise`
+    id("com.gradle.enterprise") version "3.11.1"
     id("com.gradle.common-custom-user-data-gradle-plugin") version "1.7.2"
 }
 

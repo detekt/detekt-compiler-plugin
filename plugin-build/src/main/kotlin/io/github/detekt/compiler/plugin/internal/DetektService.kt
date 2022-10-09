@@ -26,6 +26,7 @@ internal class DetektService(
             is UnexpectedError -> throw error
             is MaxIssuesReached -> log.warn(error.localizedMessage) // TODO: handle MaxIssuePolicy
             is InvalidConfig -> log.warn(error.localizedMessage)
+            null -> { } // nothing to do in this case
         }
     }
 }

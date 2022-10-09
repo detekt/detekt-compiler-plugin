@@ -1,27 +1,22 @@
 [versions]
-
-assertj = "3.21.0"
-detekt = "1.20.0"
-junit = "5.8.2"
-kotlin = "1.6.21"
-kotlinCompileTesting = "1.4.8"
+detekt = "1.21.0"
+junit = "5.9.1"
+kotlin = "1.7.0"
 
 [libraries]
 
-assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.23.1" }
 
 detekt-api = { module = "io.gitlab.arturbosch.detekt:detekt-api", version.ref = "detekt" }
 detekt-core = { module = "io.gitlab.arturbosch.detekt:detekt-core", version.ref = "detekt" }
 detekt-rules = { module = "io.gitlab.arturbosch.detekt:detekt-rules", version.ref = "detekt" }
 detekt-tooling = { module = "io.gitlab.arturbosch.detekt:detekt-tooling", version.ref = "detekt" }
 
-kotlinCompileTesting = { module = "com.github.tschuchortdev:kotlin-compile-testing", version.ref = "kotlinCompileTesting" }
+kotlinCompileTesting = { module = "com.github.tschuchortdev:kotlin-compile-testing", version = "1.4.9" }
 
 [plugins]
-download = { id = "de.undercouch.download", version = "4.1.1" }
-gradleVersionz = { id = "com.github.ben-manes.versions", version = "0.39.0" }
+download = { id = "de.undercouch.download", version = "5.2.1" }
+gradleVersionz = { id = "com.github.ben-manes.versions", version = "0.42.0" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 pluginPublishing = { id = "com.gradle.plugin-publish", version = "0.15.0" }
-shadow = { id = "com.github.johnrengelman.shadow", version = "7.0.0" }
-
-[bundles]
+shadow = { id = "com.github.johnrengelman.shadow", version = "7.1.2" }
