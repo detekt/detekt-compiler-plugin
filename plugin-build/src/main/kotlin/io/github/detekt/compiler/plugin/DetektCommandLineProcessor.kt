@@ -1,6 +1,5 @@
 package io.github.detekt.compiler.plugin
 
-import io.github.detekt.gradle.DETEKT_COMPILER_PLUGIN
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -13,7 +12,7 @@ import java.util.Base64
 
 class DetektCommandLineProcessor : CommandLineProcessor {
 
-    override val pluginId: String = DETEKT_COMPILER_PLUGIN
+    override val pluginId: String = "detekt-compiler-plugin"
 
     override val pluginOptions: Collection<AbstractCliOption> = listOf(
         CliOption(

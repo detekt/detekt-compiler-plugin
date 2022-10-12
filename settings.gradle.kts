@@ -3,6 +3,7 @@ import com.gradle.enterprise.gradleplugin.internal.extension.BuildScanExtensionW
 rootProject.name = "detekt-compiler-plugin-composite-build"
 
 includeBuild("plugin-build")
+includeBuild("detekt-compiler-plugin-gradle-plugin")
 
 plugins {
     id("com.gradle.enterprise") version "3.11.1"

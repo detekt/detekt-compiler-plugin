@@ -41,6 +41,9 @@ jobs:
       - name: Build detekt-compiler-plugin
         run: ./gradlew -p plugin-build build --stacktrace
 
+      - name: Build detekt-compiler-plugin-gradle-plugin
+        run: ./gradlew -p detekt-compiler-plugin-gradle-plugin build --stacktrace
+
       - name: Run smoke test
         run: ./gradlew -p plugin-build testPluginKotlinc
 
