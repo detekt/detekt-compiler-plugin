@@ -16,9 +16,7 @@ val detektPublication = "DetektPublication"
 plugins {
     alias(libs.plugins.kotlin)
     id("maven-publish")
-    id("java-gradle-plugin")
     `jvm-test-suite`
-    alias(libs.plugins.pluginPublishing)
     alias(libs.plugins.gradleVersionz)
     alias(libs.plugins.shadow)
     alias(libs.plugins.download)
@@ -30,9 +28,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly(gradleApi())
-    compileOnly(kotlin("gradle-plugin"))
-    compileOnly(kotlin("gradle-plugin-api"))
     compileOnly(kotlin("stdlib"))
     compileOnly(kotlin("compiler-embeddable"))
 
@@ -175,27 +170,4 @@ val javadocJar by tasks.registering(Jar::class) {
 artifacts {
     archives(sourcesJar)
     archives(javadocJar)
-}
-
-gradlePlugin {
-    plugins {
-        register("detektCompilerPlugin") {
-            id = "io.github.detekt.gradle.compiler-plugin"
-            implementationClass = "io.github.detekt.gradle.DetektKotlinCompilerPlugin"
-        }
-    }
-}
-
-pluginBundle {
-    website = "https://detekt.github.io/detekt"
-    vcsUrl = "https://github.com/detekt/detekt-compiler-plugin"
-    description = "Static code analysis for Kotlin as a compiler plugin."
-    tags = listOf("kotlin", "detekt", "code-analysis")
-
-    (plugins) {
-        "detektCompilerPlugin" {
-            id = "io.github.detekt.gradle.compiler-plugin"
-            displayName = "Static code analysis for Kotlin"
-        }
-    }
 }

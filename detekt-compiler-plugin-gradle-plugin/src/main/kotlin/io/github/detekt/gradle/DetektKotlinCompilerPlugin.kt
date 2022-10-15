@@ -1,6 +1,5 @@
 package io.github.detekt.gradle
 
-import io.github.detekt.compiler.plugin.Options
 import io.github.detekt.gradle.extensions.KotlinCompileTaskDetektExtension
 import io.github.detekt.gradle.extensions.ProjectDetektExtension
 import org.gradle.api.Project
@@ -74,15 +73,15 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         }
 
         val options = project.objects.listProperty(SubpluginOption::class.java).apply {
-            add(SubpluginOption(Options.debug, taskExtension.debug.get().toString()))
-            add(SubpluginOption(Options.configDigest, taskExtension.config.toDigest()))
-            add(SubpluginOption(Options.isEnabled, taskExtension.isEnabled.get().toString()))
-            add(SubpluginOption(Options.useDefaultConfig, taskExtension.buildUponDefaultConfig.get().toString()))
-            add(SubpluginOption(Options.allRules, taskExtension.allRules.get().toString()))
-            add(SubpluginOption(Options.disableDefaultRuleSets, taskExtension.disableDefaultRuleSets.get().toString()))
-            add(SubpluginOption(Options.parallel, taskExtension.parallel.get().toString()))
-            add(SubpluginOption(Options.rootPath, project.rootDir.toString()))
-            add(SubpluginOption(Options.excludes, taskExtension.excludes.get().encodeToBase64()))
+            add(SubpluginOption("debug", taskExtension.debug.get().toString()))
+            add(SubpluginOption("configDigest", taskExtension.config.toDigest()))
+            add(SubpluginOption("isEnabled", taskExtension.isEnabled.get().toString()))
+            add(SubpluginOption("useDefaultConfig", taskExtension.buildUponDefaultConfig.get().toString()))
+            add(SubpluginOption("allRules", taskExtension.allRules.get().toString()))
+            add(SubpluginOption("disableDefaultRuleSets", taskExtension.disableDefaultRuleSets.get().toString()))
+            add(SubpluginOption("parallel", taskExtension.parallel.get().toString()))
+            add(SubpluginOption("rootDir", project.rootDir.toString()))
+            add(SubpluginOption("excludes", taskExtension.excludes.get().encodeToBase64()))
 
             taskExtension.reports.all { report ->
                 report.enabled.convention(true)
@@ -93,7 +92,7 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
                 if (report.enabled.get()) {
                     add(
                         SubpluginOption(
-                            Options.report,
+                            "report",
                             "${report.name}:${report.destination.asFile.get().absolutePath}"
                         )
                     )
@@ -101,9 +100,9 @@ class DetektKotlinCompilerPlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        taskExtension.baseline.getOrNull()?.let { options.add(SubpluginOption(Options.baseline, it.toString())) }
+        taskExtension.baseline.getOrNull()?.let { options.add(SubpluginOption("baseline", it.toString())) }
         if (taskExtension.config.any()) {
-            options.add(SubpluginOption(Options.config, taskExtension.config.joinToString(",")))
+            options.add(SubpluginOption("config", taskExtension.config.joinToString(",")))
         }
 
         return options
