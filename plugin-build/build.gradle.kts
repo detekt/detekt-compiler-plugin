@@ -16,7 +16,8 @@ val detektPublication = "DetektPublication"
 plugins {
     alias(libs.plugins.kotlin)
     id("maven-publish")
-    `jvm-test-suite`
+    id("signing")
+    id("jvm-test-suite")
     alias(libs.plugins.gradleVersionz)
     alias(libs.plugins.shadow)
     alias(libs.plugins.download)
@@ -171,3 +172,60 @@ artifacts {
     archives(sourcesJar)
     archives(javadocJar)
 }
+
+publishing {
+    repositories {
+        maven {
+            name = "mavenCentral"
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2")
+            credentials {
+                username = "SONATYPE_USERNAME".byProperty
+                password = "SONATYPE_PASSWORD".byProperty
+            }
+        }
+    }
+    publications.register<MavenPublication>(detektPublication) {
+        groupId = project.group.toString()
+        artifactId = project.name
+        from(components["java"])
+        version = detektPluginVersion
+        pom {
+            description.set("Compiler plugin for Detekt, the Static code analyzer for Kotlin")
+            name.set("detekt")
+            url.set("https://detekt.dev")
+            licenses {
+                license {
+                    name.set("The Apache Software License, Version 2.0")
+                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                    distribution.set("repo")
+                }
+            }
+            developers {
+                developer {
+                    id.set("Detekt Developers")
+                    name.set("Detekt Developers")
+                    email.set("info@detekt.dev")
+                }
+            }
+            scm {
+                url.set("https://github.com/detekt/detekt")
+            }
+        }
+    }
+}
+
+val signingKey = "SIGNING_KEY".byProperty
+val signingPwd = "SIGNING_PWD".byProperty
+if (signingKey.isNullOrBlank() || signingPwd.isNullOrBlank()) {
+    logger.info("Signing disabled as the GPG key was not found")
+} else {
+    logger.info("GPG Key found - Signing enabled")
+}
+
+signing {
+    useInMemoryPgpKeys(signingKey, signingPwd)
+    sign(publishing.publications)
+    isRequired = !(signingKey.isNullOrBlank() || signingPwd.isNullOrBlank())
+}
+
+val String.byProperty: String? get() = providers.gradleProperty(this).orNull
