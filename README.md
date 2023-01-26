@@ -1,18 +1,19 @@
-# WIP: __detekt-compiler-plugin__
+# Detekt Compiler Plugin
 
 ![Pre Merge Checks](https://github.com/detekt/detekt-compiler-plugin/workflows/Pre%20Merge%20Checks/badge.svg)
 [![gradle plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/io/github/detekt/gradle/compiler-plugin/io.github.detekt.gradle.compiler-plugin.gradle.plugin/maven-metadata.xml.svg?label=Gradle&style=flat-square)](https://plugins.gradle.org/plugin/io.github.detekt.gradle.compiler-plugin)
+
+⚠️ This repository is going to get archived in the near future. The development of the `detekt-compiler-plugin` has been moved to the [detekt repo](https://github.com/detekt/detekt/tree/main/detekt-compiler-plugin) ⚠️
 
 Experimental support for integrating detekt as a Kotlin compiler plugin
 
 ![image](docs/detekt-compiler-plugin.png "image")
 
-
 ### Usage
 
 ```kotlin
 plugins {
-    id("io.github.detekt.gradle.compiler-plugin") version "<latest>"
+    id("io.github.detekt.gradle.compiler-plugin") version "0.4.0"
 }
 
 detekt {
