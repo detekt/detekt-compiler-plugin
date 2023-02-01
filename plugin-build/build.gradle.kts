@@ -157,20 +157,9 @@ tasks {
     }
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    dependsOn(tasks.classes)
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    from(tasks.javadoc)
-    archiveClassifier.set("javadoc")
-}
-
-artifacts {
-    archives(sourcesJar)
-    archives(javadocJar)
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
 
 publishing {

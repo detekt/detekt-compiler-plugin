@@ -74,20 +74,9 @@ tasks {
     }
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    dependsOn(tasks.classes)
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    from(tasks.javadoc)
-    archiveClassifier.set("javadoc")
-}
-
-artifacts {
-    archives(sourcesJar)
-    archives(javadocJar)
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
 
 gradlePlugin {
@@ -128,26 +117,30 @@ publishing {
         groupId = project.group.toString()
         artifactId = project.name
         version = detektPluginVersion
-        pom {
-            description.set("Gradle plugin to support the compiler plugin for Detekt, the Static code analyzer for Kotlin")
-            name.set("detekt")
-            url.set("https://detekt.dev")
-            licenses {
-                license {
-                    name.set("The Apache Software License, Version 2.0")
-                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                    distribution.set("repo")
+    }
+    afterEvaluate {
+        publications.withType<MavenPublication>().configureEach {
+            pom {
+                description.set("Gradle plugin to support the compiler plugin for Detekt, the Static code analyzer for Kotlin")
+                name.set("detekt")
+                url.set("https://detekt.dev")
+                licenses {
+                    license {
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
+                    }
                 }
-            }
-            developers {
-                developer {
-                    id.set("Detekt Developers")
-                    name.set("Detekt Developers")
-                    email.set("info@detekt.dev")
+                developers {
+                    developer {
+                        id.set("Detekt Developers")
+                        name.set("Detekt Developers")
+                        email.set("info@detekt.dev")
+                    }
                 }
-            }
-            scm {
-                url.set("https://github.com/detekt/detekt")
+                scm {
+                    url.set("https://github.com/detekt/detekt")
+                }
             }
         }
     }
